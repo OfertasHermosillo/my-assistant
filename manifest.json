@@ -1,0 +1,24 @@
+{
+  "name": "Mi Asistente",
+  "short_name": "Asistente",
+  "description": "Mi asistente personal de tareas y recordatorios",
+  "start_url": "/my-assistant/",
+  "scope": "/my-assistant/",
+  "display": "standalone",
+  "background_color": "#0d0d14",
+  "theme_color": "#7c6af5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4cb.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4cb.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
