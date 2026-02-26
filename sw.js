@@ -1,17 +1,19 @@
-const CACHE = 'asistente-cache-v1';
-const ASSETS = ['./'];
+const VERSION = 'v' + Date.now();
 
 self.addEventListener('install', e => {
   self.skipWaiting();
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(clients.claim());
 });
 
-// No cachear nada - siempre sirve la versión más reciente
+// Siempre red primero, nunca caché viejo
 self.addEventListener('fetch', e => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  e.respondWith(
+    fetch(e.request).catch(() => caches.match(e.request))
+  );
 });
 
 self.addEventListener('notificationclick', e => {
