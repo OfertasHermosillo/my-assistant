@@ -319,21 +319,57 @@ function checkAlarms(){
   });
 }
 
+let alarmInterval = null;
+
+function playAlarmSound(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(freq, start, dur){
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = freq;
+      o.type = 'sine';
+      g.gain.setValueAtTime(0, ctx.currentTime + start);
+      g.gain.linearRampToValueAtTime(0.6, ctx.currentTime + start + 0.05);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + start + dur);
+      o.start(ctx.currentTime + start);
+      o.stop(ctx.currentTime + start + dur + 0.05);
+    }
+    // Alarm pattern: beep beep beep pause
+    beep(880, 0,    0.15);
+    beep(880, 0.2,  0.15);
+    beep(880, 0.4,  0.15);
+    beep(1100,0.7,  0.3);
+    beep(880, 1.1,  0.15);
+    beep(880, 1.3,  0.15);
+    beep(1100,1.6,  0.3);
+  }catch(e){}
+}
+
+function stopAlarmSound(){
+  if(alarmInterval){ clearInterval(alarmInterval); alarmInterval=null; }
+}
+
 function triggerAlarm(t){
-  // In-app popup
   curAlarm = t;
   document.getElementById('aTask').textContent = t.title;
   document.getElementById('aNote').textContent = t.note || t.cat || '';
   document.getElementById('alarmWrap').classList.add('open');
-  if(navigator.vibrate) navigator.vibrate([500,200,500,200,500]);
-  // System notification
+  // Vibración
+  if(navigator.vibrate) navigator.vibrate([500,200,500,200,500,200,500]);
+  // Sonido — repite cada 3 segundos
+  playAlarmSound();
+  alarmInterval = setInterval(playAlarmSound, 3000);
+  // Notificación del sistema
   if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
     try{ new Notification('⏰ '+t.title, {body: t.note || t.cat || 'Toca para ver', requireInteraction:true}); }catch(e){}
   }
 }
 
-function dismiss(){ document.getElementById('alarmWrap').classList.remove('open'); curAlarm=null; }
+function dismiss(){ stopAlarmSound(); document.getElementById('alarmWrap').classList.remove('open'); curAlarm=null; }
 function snooze(){
+  stopAlarmSound();
   if(!curAlarm) return;
   const t = tasks.find(x=>x.id===curAlarm.id);
   if(t && t.time){
