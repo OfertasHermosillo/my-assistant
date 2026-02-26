@@ -297,10 +297,19 @@ function updateNotifBanner(){
 }
 
 async function requestNotifPermission(){
-  if(typeof Notification==='undefined'||notifPerm==='granted') return;
-  const r = await Notification.requestPermission();
-  notifPerm=r; updateNotifBanner();
-  if(r==='granted') toast('🔔 ¡Notificaciones activadas!');
+  if(typeof Notification==='undefined'){ toast('⚠️ Tu navegador no soporta notificaciones'); return; }
+  if(notifPerm==='granted'){ toast('✅ Notificaciones ya están activas'); return; }
+  try {
+    const r = await Notification.requestPermission();
+    notifPerm=r; updateNotifBanner();
+    if(r==='granted'){
+      toast('🔔 ¡Notificaciones activadas!');
+      // Test notification
+      new Notification('✅ Mi Asistente', {body:'Las notificaciones funcionan correctamente'});
+    } else {
+      toast('⚠️ Permiso denegado — actívalas en ajustes del navegador');
+    }
+  } catch(e){ toast('Error: '+e.message); }
 }
 
 function sendNotif(task){
@@ -530,6 +539,13 @@ function saveTask(){
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// SERVICE WORKER - para notificaciones reales
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js', {scope:'./'})
+    .then(reg => console.log('SW registrado:', reg.scope))
+    .catch(err => console.log('SW error:', err));
+}
 </script>
 </body>
 </html>
