@@ -129,6 +129,26 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
 .btn-save{flex:1;background:linear-gradient(135deg,var(--accent),#a78bfa);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:600;font-size:15px;cursor:pointer;}
 .btn-cancel{background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px 18px;border-radius:12px;cursor:pointer;font-size:14px;font-family:'Outfit',sans-serif;}
 
+
+/* GOAL PRESETS */
+.goal-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2px;}
+.gp{padding:7px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+.gp.sel{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+
+/* GOAL PROGRESS IN CALENDAR */
+.goal-banner{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+.goal-banner.completed{border-color:var(--accent3);background:rgba(78,205,196,.08);}
+.goal-banner.expired{border-color:var(--danger);background:rgba(255,107,107,.08);}
+.gb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.gb-title{font-size:13px;font-weight:600;}
+.gb-badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.gb-badge.active{background:rgba(124,106,245,.2);color:var(--accent);}
+.gb-badge.done{background:rgba(78,205,196,.2);color:var(--accent3);}
+.gb-badge.expired{background:rgba(255,107,107,.2);color:var(--danger);}
+.gb-prog{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:6px;}
+.gb-fill{height:100%;border-radius:4px;transition:width .5s;}
+.gb-stats{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+
 /* CONFIRM */
 .conf-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:300;align-items:center;justify-content:center;padding:24px;}
 .conf-wrap.open{display:flex;}
@@ -186,7 +206,25 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   <div class="modal">
     <div class="handle"></div>
     <h2 id="mTitle">Nuevo Hábito</h2>
-    <div class="field"><label>Nombre</label><input type="text" id="fName" placeholder="Ej: Vitaminas, Ejercicio..." maxlength="40"/></div>
+    <div class="field"><label>Nombre del hábito</label><input type="text" id="fName" placeholder="Ej: Vitamina C, Ejercicio de fuerza..." maxlength="40"/></div>
+    <div class="field"><label>🎯 Meta de días</label>
+      <div class="goal-presets" id="goalPresets"></div>
+      <input type="number" id="fGoalDays" placeholder="O escribe los días que quieras..." min="1" max="730" style="margin-top:8px"/>
+    </div>
+    <div class="field">
+      <label>📅 Periodo del reto</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600;">INICIO</div>
+          <input type="date" id="fStartDate"/>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600;">FECHA LÍMITE</div>
+          <input type="date" id="fEndDate"/>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">💡 No tienen que ser días seguidos — puedes cumplir tu meta en cualquier día del periodo</div>
+    </div>
     <div class="field"><label>Ícono</label><div class="emoji-grid" id="emojiGrid"></div></div>
     <div class="field"><label>Color</label><div class="color-row" id="colorRow"></div></div>
     <div class="modal-btns">
@@ -222,8 +260,10 @@ let editId = null;
 let deleteId = null;
 let selEmoji = '💊';
 let selColor = 'morado';
+let selGoalDays = 0;
 let curYear = new Date().getFullYear();
 let curMonth = new Date().getMonth();
+const GOAL_PRESETS = [7, 21, 30, 66, 90, 0];
 
 const COLORS = {morado:'#7c6af5',verde:'#4ecdc4',rojo:'#ff6b6b',amarillo:'#f5a623',rosa:'#f472b6',azul:'#38bdf8',naranja:'#fb923c'};
 const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -258,18 +298,22 @@ function renderList(){
     const color = COLORS[h.color||'morado'];
     const todayKey = String(today.getDate()).padStart(2,'0');
     const doneToday = h.logs&&h.logs[mk]&&h.logs[mk][todayKey];
+    // Goal info
+    const goalInfo = getGoalInfo(h);
+    const goalBadge = goalInfo ? `<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;background:${goalInfo.bgColor};color:${goalInfo.color}">${goalInfo.label}</span>` : '';
     return `
-    <div class="habit-row" style="--row-color:${color}" onclick="openCalendar('${h.id}')">
+    <div class="habit-row" onclick="openCalendar('${h.id}')">
       <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:${color};border-radius:4px 0 0 4px;"></div>
       <div class="row-emoji">${h.emoji||'✅'}</div>
       <div class="row-info">
         <div class="row-name">${esc(h.name)}</div>
         <div class="row-sub">
-          ${streak>0?`<span class="row-streak" style="color:${color}">🔥 ${streak}d seguidos</span>`:'<span class="row-pct">Sin racha aún</span>'}
-          <span class="row-pct">${done}/${daysInMonth} días · ${pct}%</span>
+          ${streak>0?`<span class="row-streak" style="color:${color}">🔥 ${streak}d seguidos</span>`:''}
+          ${goalBadge}
           ${doneToday?`<span style="font-size:11px;color:var(--accent3);font-weight:600">✓ Hoy</span>`:''}
         </div>
-        <div class="mini-prog"><div class="mini-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="mini-prog"><div class="mini-fill" style="width:${goalInfo?goalInfo.pct:pct}%;background:${color}"></div></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">${goalInfo ? goalInfo.detail : done+'/'+daysInMonth+' días este mes · '+pct+'%'}</div>
       </div>
       <div style="display:flex;gap:2px;align-items:center;">
         <button class="row-btn" onclick="event.stopPropagation();editHabit('${h.id}')">✏️</button>
@@ -278,6 +322,75 @@ function renderList(){
       </div>
     </div>`;
   }).join('');
+}
+
+
+// ── GOAL INFO ───────────────────────────────────────────
+function getGoalInfo(h){
+  if(!h.goalDays || h.goalDays===0) return null;
+  const start = h.startDate ? new Date(h.startDate+'T00:00:00') : new Date(h.created);
+  start.setHours(0,0,0,0);
+  // End date: explicit or calculated
+  let end;
+  if(h.endDate){
+    end = new Date(h.endDate+'T00:00:00');
+    end.setHours(0,0,0,0);
+  } else {
+    end = new Date(start);
+    end.setDate(end.getDate() + h.goalDays - 1);
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  // Count only days within the period
+  const totalDone = getDoneInPeriod(h, start, end);
+  const pct = Math.min(100, Math.round(totalDone / h.goalDays * 100));
+  const daysLeft = Math.ceil((end - today) / 86400000);
+  // Calendar days remaining in period
+  const periodDays = Math.ceil((end - start) / 86400000) + 1;
+  const isCompleted = totalDone >= h.goalDays;
+  const isExpired = today > end && !isCompleted;
+  let label, color, bgColor, detail;
+  if(isCompleted){
+    label='🏆 ¡Meta lograda!'; color='#4ecdc4'; bgColor='rgba(78,205,196,.2)';
+    detail=totalDone+' de '+h.goalDays+' sesiones completadas ✓';
+  } else if(isExpired){
+    label='⏰ Venció'; color='#ff6b6b'; bgColor='rgba(255,107,107,.2)';
+    detail=totalDone+' de '+h.goalDays+' sesiones completadas';
+  } else {
+    const dl = daysLeft<=0 ? '¡Último día!' : daysLeft===1 ? '1 día restante' : daysLeft+'d restantes';
+    label=dl; color='#7c6af5'; bgColor='rgba(124,106,245,.2)';
+    detail=totalDone+' de '+h.goalDays+' sesiones · límite: '+fmtDate(end);
+  }
+  return {pct, label, color, bgColor, detail, totalDone, isCompleted, isExpired, daysLeft, end, start, periodDays};
+}
+
+function getDoneInPeriod(h, start, end){
+  if(!h.logs) return 0;
+  let total = 0;
+  const s = new Date(start); s.setHours(0,0,0,0);
+  const e = new Date(end);   e.setHours(23,59,59,999);
+  Object.entries(h.logs).forEach(([mk, days])=>{
+    const [yr, mo] = mk.split('-').map(Number);
+    Object.entries(days).forEach(([dk, done])=>{
+      if(!done) return;
+      const d = new Date(yr, mo-1, parseInt(dk));
+      if(d >= s && d <= e) total++;
+    });
+  });
+  return total;
+}
+
+function getTotalDone(h){
+  if(!h.logs) return 0;
+  let total = 0;
+  Object.values(h.logs).forEach(month => {
+    total += Object.values(month).filter(v=>v).length;
+  });
+  return total;
+}
+
+function fmtDate(d){
+  const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return d.getDate()+' '+ms[d.getMonth()]+' '+d.getFullYear();
 }
 
 // ── CALENDAR VIEW ───────────────────────────────────────
@@ -321,10 +434,11 @@ function renderCalendar(){
   const streak = getStreak(h);
 
   // Stats
+  const goalInfo = getGoalInfo(h);
   document.getElementById('calStats').innerHTML = `
-    <div class="cstat"><div class="cstat-num" style="color:${color}">${doneDays}</div><div class="cstat-lbl">Completados</div></div>
-    <div class="cstat"><div class="cstat-num" style="color:${color}">${daysInMonth-doneDays}</div><div class="cstat-lbl">Pendientes</div></div>
+    <div class="cstat"><div class="cstat-num" style="color:${color}">${doneDays}</div><div class="cstat-lbl">Este mes</div></div>
     <div class="cstat"><div class="cstat-num" style="color:var(--accent2)">${streak}</div><div class="cstat-lbl">🔥 Racha</div></div>
+    ${goalInfo ? `<div class="cstat"><div class="cstat-num" style="color:${goalInfo.color}">${goalInfo.totalDone}</div><div class="cstat-lbl">Meta total</div></div>` : `<div class="cstat"><div class="cstat-num" style="color:${color}">${daysInMonth-doneDays}</div><div class="cstat-lbl">Pendientes</div></div>`}
   `;
 
   // Grid
@@ -347,14 +461,29 @@ function renderCalendar(){
     grid+=`<div class="${cls}" ${bgStyle} onclick="toggleDay('${mk}','${dk}')">${d}</div>`;
   }
 
+  const goalBanner = goalInfo ? `
+    <div class="goal-banner ${goalInfo.isCompleted?'completed':goalInfo.isExpired?'expired':''}">
+      <div class="gb-top">
+        <div class="gb-title">🎯 Meta: ${h.goalDays} días</div>
+        <div class="gb-badge ${goalInfo.isCompleted?'done':goalInfo.isExpired?'expired':'active'}">${goalInfo.label}</div>
+      </div>
+      <div class="gb-prog"><div class="gb-fill" style="width:${goalInfo.pct}%;background:${color}"></div></div>
+      <div class="gb-stats">
+        <span>${goalInfo.totalDone} de ${h.goalDays} días completados</span>
+        <span style="font-weight:700;color:${color}">${goalInfo.pct}%</span>
+      </div>
+      ${!goalInfo.isCompleted && !goalInfo.isExpired ? `<div style="font-size:11px;color:var(--muted);margin-top:6px">📅 ${fmtDate(goalInfo.start)} → ${fmtDate(goalInfo.end)} · ${goalInfo.daysLeft} días restantes</div>` : ''}
+    </div>` : '';
+
   document.getElementById('calGrid').innerHTML = `
+    ${goalBanner}
     <div class="cal-days-hdr">${cells}</div>
     <div class="cal-grid">${grid}</div>
     <div class="cal-prog-wrap">
       <div class="cal-prog-label"><span>Progreso del mes</span><span style="color:${color};font-weight:700">${pct}%</span></div>
       <div class="cal-prog-bar"><div class="cal-prog-fill" style="width:${pct}%;background:${color}"></div></div>
     </div>
-    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">Total: <strong style="color:var(--text)">${doneDays} de ${daysInMonth} días</strong></div>
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">Total mes: <strong style="color:var(--text)">${doneDays} de ${daysInMonth} días</strong></div>
   `;
 }
 
@@ -397,14 +526,31 @@ function buildPickers(){
   document.getElementById('colorRow').innerHTML = Object.entries(COLORS).map(([k,v])=>
     `<div class="co${k===selColor?' sel':''}" data-c="${k}" style="background:${v}" onclick="pickColor('${k}')"></div>`
   ).join('');
+  const labels = {7:'7 días',21:'21 días',30:'30 días',66:'66 días',90:'90 días',0:'Sin límite'};
+  document.getElementById('goalPresets').innerHTML = Object.entries(labels).map(([d,l])=>
+    `<button class="gp${parseInt(d)===selGoalDays?' sel':''}" data-d="${d}" onclick="pickGoal(${d})">${l}</button>`
+  ).join('');
+}
+function pickGoal(d){
+  selGoalDays=d;
+  document.querySelectorAll('.gp').forEach(b=>b.classList.toggle('sel',parseInt(b.dataset.d)===d));
+  document.getElementById('fGoalDays').value = d>0?d:'';
+}
+function syncGoalInput(){
+  const v = parseInt(document.getElementById('fGoalDays').value)||0;
+  selGoalDays=v;
+  document.querySelectorAll('.gp').forEach(b=>b.classList.toggle('sel',parseInt(b.dataset.d)===v));
 }
 function pickEmoji(e){ selEmoji=e; document.querySelectorAll('.eo').forEach(b=>b.classList.toggle('sel',b.dataset.e===e)); }
 function pickColor(c){ selColor=c; document.querySelectorAll('.co').forEach(b=>b.classList.toggle('sel',b.dataset.c===c)); }
 
 // ── MODAL ───────────────────────────────────────────────
 function openModal(){
-  editId=null; selEmoji='💊'; selColor='morado';
+  editId=null; selEmoji='💊'; selColor='morado'; selGoalDays=0;
   document.getElementById('fName').value='';
+  document.getElementById('fGoalDays').value='';
+  document.getElementById('fStartDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('fEndDate').value='';
   buildPickers();
   document.getElementById('mTitle').textContent='Nuevo Hábito';
   document.getElementById('overlay').classList.add('open');
@@ -412,8 +558,11 @@ function openModal(){
 }
 function editHabit(id){
   const h=habits.find(x=>x.id===id); if(!h) return;
-  editId=id; selEmoji=h.emoji||'💊'; selColor=h.color||'morado';
+  editId=id; selEmoji=h.emoji||'💊'; selColor=h.color||'morado'; selGoalDays=h.goalDays||0;
   document.getElementById('fName').value=h.name;
+  document.getElementById('fGoalDays').value=h.goalDays||'';
+  document.getElementById('fStartDate').value=h.startDate||new Date().toISOString().split('T')[0];
+  document.getElementById('fEndDate').value=h.endDate||'';
   buildPickers();
   document.getElementById('mTitle').textContent='Editar Hábito';
   document.getElementById('overlay').classList.add('open');
@@ -424,18 +573,20 @@ function bgClose(e){ if(e.target===document.getElementById('overlay')) closeModa
 function saveHabit(){
   const name=document.getElementById('fName').value.trim();
   if(!name){ toast('⚠️ Escribe el nombre'); return; }
+  const goalDays = parseInt(document.getElementById('fGoalDays').value)||0;
+  const startDate = document.getElementById('fStartDate').value || new Date().toISOString().split('T')[0];
+  const endDate = document.getElementById('fEndDate').value || '';
   if(editId){
     const h=habits.find(x=>x.id===editId);
-    h.name=name; h.emoji=selEmoji; h.color=selColor;
+    h.name=name; h.emoji=selEmoji; h.color=selColor; h.goalDays=goalDays; h.startDate=startDate; h.endDate=endDate;
     toast('✏️ Actualizado');
   } else {
-    habits.push({id:'h'+Date.now(),name,emoji:selEmoji,color:selColor,logs:{},created:new Date().toISOString()});
-    toast('🎯 Hábito creado');
+    habits.push({id:'h'+Date.now(),name,emoji:selEmoji,color:selColor,goalDays,startDate,endDate,logs:{},created:new Date().toISOString()});
+    const goalMsg = goalDays>0 ? ' · Meta: '+goalDays+' días' : '';
+    toast('🎯 Hábito creado'+goalMsg);
   }
-  save(); closeModal();
-  if(document.getElementById('calView').classList.contains('hidden')) renderList();
-  else renderCalendar();
-  renderList();
+  save(); closeModal(); renderList();
+  if(!document.getElementById('calView').classList.contains('hidden')) renderCalendar();
 }
 
 // ── DELETE ──────────────────────────────────────────────
