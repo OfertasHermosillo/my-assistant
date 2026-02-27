@@ -1,25 +1,29 @@
 {
-  "name": "Mi Asistente",
-  "short_name": "Asistente",
-  "description": "Mi asistente personal de tareas y recordatorios",
-  "start_url": "/my-assistant/",
-  "scope": "/my-assistant/",
+  "name": "Mis Hábitos",
+  "short_name": "MisHábitos",
+  "description": "App de hábitos, salud y proyectos",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#0d0d14",
-  "theme_color": "#7c6af5",
+  "theme_color": "#0d0d14",
   "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }
