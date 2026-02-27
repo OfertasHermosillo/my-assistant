@@ -15,142 +15,148 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);overflow:hidden;}
 
-/* VIEWS */
-.view{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);transition:transform .3s cubic-bezier(.32,1,.5,1);overflow:hidden;}
-.view.hidden{transform:translateX(100%);pointer-events:none;}
+/* ── VIEWS ── */
+.view{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);transition:transform .3s cubic-bezier(.32,1,.5,1);overflow:hidden;z-index:10;}
+.view.slide-right{transform:translateX(100%);pointer-events:none;}
 
-/* HEADER */
-.hdr{padding:52px 20px 14px;background:linear-gradient(180deg,rgba(124,106,245,.18)0%,transparent 100%);border-bottom:1px solid var(--border);flex-shrink:0;}
-.hdr-row{display:flex;align-items:center;justify-content:space-between;}
+/* ── HEADER ── */
+.hdr{padding:52px 20px 14px;background:linear-gradient(180deg,rgba(124,106,245,.15)0%,transparent 100%);border-bottom:1px solid var(--border);flex-shrink:0;}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
 .app-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
 .app-title span{color:var(--accent);}
-.back-btn{display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--accent);font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;padding:4px 0;}
+.hdr-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--accent);font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;padding:4px 0;}
 
-/* LIST VIEW */
-.list-scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:100px;scrollbar-width:none;}
-.list-scroll::-webkit-scrollbar{display:none;}
+/* ── SCROLL ── */
+.scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:100px;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
 
-/* HABIT ROW */
-.habit-row{
-  background:var(--card);border:1px solid var(--border);border-radius:18px;
-  padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;
-  transition:transform .15s,box-shadow .15s;animation:sIn .25s ease;
-  position:relative;overflow:hidden;
+/* ── CATEGORY CARD ── */
+.cat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:18px;cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .15s;animation:sIn .25s ease;
 }
-.habit-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;}
-.habit-row:active{transform:scale(.97);}
+.cat-card:active{transform:scale(.97);}
+.cat-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cat-left{display:flex;align-items:center;gap:12px;}
+.cat-emoji{font-size:28px;}
+.cat-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;}
+.cat-count{font-size:12px;color:var(--muted);margin-top:2px;}
+.cat-pct{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;}
+.cat-prog{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+.cat-prog-fill{height:100%;border-radius:3px;transition:width .5s;}
+.cat-prog-stats{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+.cat-arrow{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--border);}
+.cat-actions{display:flex;gap:4px;}
+.ic-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:6px;border-radius:8px;}
+
 @keyframes sIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
-.row-emoji{font-size:28px;flex-shrink:0;}
+/* ── HABIT ROW ── */
+.habit-row{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:15px;display:flex;align-items:center;gap:12px;cursor:pointer;
+  position:relative;overflow:hidden;transition:transform .15s;animation:sIn .25s ease;
+}
+.habit-row:active{transform:scale(.97);}
+.habit-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;}
+.row-emoji{font-size:26px;flex-shrink:0;}
 .row-info{flex:1;min-width:0;}
-.row-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px;}
-.row-sub{display:flex;align-items:center;gap:10px;}
-.row-streak{font-size:12px;font-weight:600;}
-.row-pct{font-size:12px;color:var(--muted);}
-
-/* MINI PROGRESS */
-.mini-prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:7px;}
+.row-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;}
+.row-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
+.row-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.mini-prog{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
 .mini-fill{height:100%;border-radius:2px;transition:width .4s;}
+.row-arrow{color:var(--border);font-size:18px;flex-shrink:0;}
 
-.row-arrow{color:var(--muted);font-size:18px;flex-shrink:0;}
-.row-actions{display:flex;gap:4px;flex-shrink:0;}
-.row-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:6px;border-radius:8px;}
-
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:14px;padding:40px 20px;}
-.empty-ico{font-size:56px;opacity:.3;}
-.empty-txt{color:var(--muted);font-size:15px;line-height:1.7;}
-
-/* FAB */
-.fab{position:fixed;bottom:24px;right:22px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;color:#fff;font-size:28px;cursor:pointer;box-shadow:0 8px 30px rgba(124,106,245,.5);display:flex;align-items:center;justify-content:center;z-index:50;transition:transform .15s;}
-.fab:active{transform:scale(.9);}
-
-/* ── CALENDAR VIEW ── */
+/* ── CALENDAR ── */
 .cal-hdr{padding:52px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.cal-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.cal-habit-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;}
-
-.month-nav{display:flex;align-items:center;gap:10px;}
-.mn-btn{background:var(--card);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cal-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-title-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.cal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;}
+.month-nav{display:flex;align-items:center;gap:8px;justify-content:center;}
+.mn-btn{background:var(--card);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
 .mn-label{font-size:14px;font-weight:600;min-width:120px;text-align:center;}
-
-/* STATS ROW */
 .cal-stats{display:flex;gap:8px;margin-top:10px;}
 .cstat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px;text-align:center;}
 .cstat-num{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;}
 .cstat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
-
 .cal-scroll{flex:1;overflow-y:auto;padding:14px 14px 60px;scrollbar-width:none;}
 .cal-scroll::-webkit-scrollbar{display:none;}
-
-/* CALENDAR */
 .cal-days-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:5px;}
 .cdl{text-align:center;font-size:11px;color:var(--muted);font-weight:600;padding:3px 0;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.cday{
-  height:42px;border-radius:10px;border:1px solid var(--border);
-  background:var(--surface);display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:500;cursor:pointer;position:relative;
-  transition:all .15s;color:var(--muted);
-}
+.cday{height:42px;border-radius:10px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;cursor:pointer;position:relative;transition:all .15s;color:var(--muted);}
 .cday:active{transform:scale(.85);}
 .cday.empty{background:transparent;border-color:transparent;cursor:default;}
 .cday.today{border-color:var(--accent);color:var(--text);font-weight:700;}
 .cday.done{color:#fff;font-weight:700;}
 .cday.done::after{content:'✓';position:absolute;bottom:2px;right:4px;font-size:9px;opacity:.9;}
 .cday.future{opacity:.25;cursor:default;}
-
-/* PROGRESS BAR */
 .cal-prog-wrap{margin-top:14px;}
 .cal-prog-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
 .cal-prog-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
 .cal-prog-fill{height:100%;border-radius:3px;transition:width .5s;}
 
-/* MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:200;align-items:flex-end;justify-content:center;}
+/* GOAL BANNER */
+.goal-banner{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:14px;}
+.goal-banner.completed{border-color:var(--accent3);background:rgba(78,205,196,.08);}
+.goal-banner.expired{border-color:var(--danger);background:rgba(255,107,107,.08);}
+.gb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.gb-title{font-size:13px;font-weight:600;}
+.gb-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.gb-prog{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.gb-fill{height:100%;border-radius:3px;transition:width .5s;}
+.gb-stats{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:22px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;color:#fff;font-size:28px;cursor:pointer;box-shadow:0 8px 30px rgba(124,106,245,.5);display:flex;align-items:center;justify-content:center;z-index:100;transition:transform .15s;}
+.fab:active{transform:scale(.9);}
+
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:14px;padding:40px 20px;}
+.empty-ico{font-size:54px;opacity:.3;}
+.empty-txt{color:var(--muted);font-size:15px;line-height:1.7;}
+
+/* ── MODALS ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:500;align-items:flex-end;justify-content:center;}
 .overlay.open{display:flex;animation:fIn .2s ease;}
 @keyframes fIn{from{opacity:0;}to{opacity:1;}}
-.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:0 20px 44px;border:1px solid var(--border);border-bottom:none;animation:sUp .3s cubic-bezier(.32,1.2,.5,1);max-height:90vh;overflow-y:auto;scrollbar-width:none;}
+.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:0 20px 44px;border:1px solid var(--border);border-bottom:none;animation:sUp .3s cubic-bezier(.32,1.2,.5,1);max-height:93vh;overflow-y:auto;scrollbar-width:none;}
 .modal::-webkit-scrollbar{display:none;}
 @keyframes sUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 .handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:16px auto 20px;}
 .modal h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:20px;}
 .field{margin-bottom:16px;}
 .field label{display:block;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
-.field input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;font-size:15px;font-family:'Outfit',sans-serif;-webkit-appearance:none;}
-.field input:focus{outline:none;border-color:var(--accent);}
+.field input,.field select{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;font-size:15px;font-family:'Outfit',sans-serif;-webkit-appearance:none;}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);}
 .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;}
-.eo{height:40px;border-radius:10px;border:1px solid var(--border);background:var(--card);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.eo{height:40px;border-radius:10px;border:1px solid var(--border);background:var(--card);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .eo.sel{border-color:var(--accent);background:rgba(124,106,245,.2);}
 .color-row{display:flex;gap:10px;flex-wrap:wrap;}
-.co{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;}
+.co{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;}
 .co.sel{border-color:#fff;transform:scale(1.18);}
+.bg-color-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.bgco{width:38px;height:38px;border-radius:10px;cursor:pointer;border:3px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.bgco.sel{border-color:#fff;transform:scale(1.1);}
+.goal-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.gp{padding:7px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+.gp.sel{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* CAT SELECT in habit modal */
+.cat-select-row{display:flex;gap:8px;align-items:center;}
+.cat-select-row select{flex:1;}
+.add-cat-btn{background:var(--accent);border:none;color:#fff;width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+
 .modal-btns{display:flex;gap:10px;margin-top:22px;}
 .btn-save{flex:1;background:linear-gradient(135deg,var(--accent),#a78bfa);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:600;font-size:15px;cursor:pointer;}
 .btn-cancel{background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px 18px;border-radius:12px;cursor:pointer;font-size:14px;font-family:'Outfit',sans-serif;}
 
-
-/* GOAL PRESETS */
-.goal-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2px;}
-.gp{padding:7px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
-.gp.sel{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
-
-/* GOAL PROGRESS IN CALENDAR */
-.goal-banner{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px;}
-.goal-banner.completed{border-color:var(--accent3);background:rgba(78,205,196,.08);}
-.goal-banner.expired{border-color:var(--danger);background:rgba(255,107,107,.08);}
-.gb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.gb-title{font-size:13px;font-weight:600;}
-.gb-badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;}
-.gb-badge.active{background:rgba(124,106,245,.2);color:var(--accent);}
-.gb-badge.done{background:rgba(78,205,196,.2);color:var(--accent3);}
-.gb-badge.expired{background:rgba(255,107,107,.2);color:var(--danger);}
-.gb-prog{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:6px;}
-.gb-fill{height:100%;border-radius:4px;transition:width .5s;}
-.gb-stats{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
-
 /* CONFIRM */
-.conf-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:300;align-items:center;justify-content:center;padding:24px;}
+.conf-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:600;align-items:center;justify-content:center;padding:24px;}
 .conf-wrap.open{display:flex;}
 .conf-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:300px;text-align:center;}
 .conf-box h3{font-family:'Syne',sans-serif;font-size:18px;margin-bottom:8px;}
@@ -159,39 +165,62 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
 .btn-del{flex:1;background:var(--danger);color:#fff;border:none;padding:12px;border-radius:12px;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:700;}
 .btn-no{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:12px;cursor:pointer;font-family:'Outfit',sans-serif;}
 
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a2e;border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;transition:all .3s;z-index:400;white-space:nowrap;pointer-events:none;}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a2e;border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;transition:all .3s;z-index:700;white-space:nowrap;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
-<!-- ── VISTA LISTA ── -->
-<div class="view" id="listView">
+<!-- ═══ VISTA 1: CATEGORÍAS ═══ -->
+<div class="view" id="v1">
   <div class="hdr">
     <div class="hdr-row">
       <div class="app-title">Mis<span>Hábitos</span></div>
-      <div style="font-size:13px;color:var(--muted)" id="listSubtitle"></div>
+      <button class="ic-btn" onclick="openCatModal()" style="font-size:22px;color:var(--accent)">＋</button>
     </div>
+    <div class="hdr-sub" id="v1Sub"></div>
   </div>
-  <div class="list-scroll" id="habitList"></div>
-  <button class="fab" onclick="openModal()">＋</button>
+  <div class="scroll" id="catList"></div>
+  <button class="fab" onclick="openHabitModal()">＋</button>
 </div>
 
-<!-- ── VISTA CALENDARIO ── -->
-<div class="view hidden" id="calView">
-  <div class="cal-hdr">
-    <div class="cal-hdr-top">
-      <button class="back-btn" onclick="goBack()">‹ Mis Hábitos</button>
-      <div style="display:flex;gap:8px;">
-        <button class="row-btn" onclick="editCurrentHabit()">✏️</button>
-        <button class="row-btn" onclick="askDeleteCurrent()">🗑</button>
+<!-- ═══ VISTA 2: HÁBITOS DE CATEGORÍA ═══ -->
+<div class="view slide-right" id="v2">
+  <div class="hdr">
+    <div class="hdr-row">
+      <button class="back-btn" onclick="goTo(1)">‹ Inicio</button>
+      <div style="display:flex;gap:4px;">
+        <button class="ic-btn" onclick="editCurCat()">✏️</button>
+        <button class="ic-btn" onclick="askDeleteCat()">🗑</button>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <span id="calEmoji" style="font-size:26px"></span>
-      <span class="cal-habit-name" id="calName"></span>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+      <span id="v2Emoji" style="font-size:26px"></span>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;" id="v2Name"></div>
+        <div style="font-size:12px;color:var(--muted)" id="v2Sub"></div>
+      </div>
     </div>
-    <div class="month-nav" style="justify-content:center;">
+  </div>
+  <div class="scroll" id="habitList"></div>
+  <button class="fab" onclick="openHabitModal()">＋</button>
+</div>
+
+<!-- ═══ VISTA 3: CALENDARIO ═══ -->
+<div class="view slide-right" id="v3">
+  <div class="cal-hdr">
+    <div class="cal-hdr-top">
+      <button class="back-btn" id="calBackBtn" onclick="goTo(2)">‹ Atrás</button>
+      <div style="display:flex;gap:4px;">
+        <button class="ic-btn" onclick="editCurHabit()">✏️</button>
+        <button class="ic-btn" onclick="askDeleteHabit()">🗑</button>
+      </div>
+    </div>
+    <div class="cal-title-row">
+      <span id="calEmoji" style="font-size:26px"></span>
+      <span class="cal-title" id="calName"></span>
+    </div>
+    <div class="month-nav">
       <button class="mn-btn" onclick="changeMonth(-1)">‹</button>
       <div class="mn-label" id="monthLabel"></div>
       <button class="mn-btn" onclick="changeMonth(1)">›</button>
@@ -201,47 +230,74 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   <div class="cal-scroll" id="calGrid"></div>
 </div>
 
-<!-- MODAL -->
-<div class="overlay" id="overlay" onclick="bgClose(event)">
+<!-- MODAL: NUEVA CATEGORÍA -->
+<div class="overlay" id="catOverlay" onclick="bgClose(event,'catOverlay')">
   <div class="modal">
     <div class="handle"></div>
-    <h2 id="mTitle">Nuevo Hábito</h2>
-    <div class="field"><label>Nombre del hábito</label><input type="text" id="fName" placeholder="Ej: Vitamina C, Ejercicio de fuerza..." maxlength="40"/></div>
-    <div class="field"><label>🎯 Meta de días</label>
-      <div class="goal-presets" id="goalPresets"></div>
-      <input type="number" id="fGoalDays" placeholder="O escribe los días que quieras..." min="1" max="730" style="margin-top:8px"/>
+    <h2 id="catModalTitle">Nueva Categoría</h2>
+    <div class="field"><label>Nombre</label><input type="text" id="fcName" placeholder="Ej: Salud, Fitness, Estudio..." maxlength="30"/></div>
+    <div class="field"><label>Ícono</label>
+      <div class="emoji-grid" id="catEmojiGrid"></div>
     </div>
-    <div class="field">
-      <label>📅 Periodo del reto</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="field"><label>Color de la categoría</label>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5">Este color será el fondo de la categoría. Los hábitos dentro tomarán el mismo color pero más claro automáticamente.</div>
+      <div class="bg-color-grid" id="catBgRow"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeCatModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveCat()">Guardar ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVO HÁBITO -->
+<div class="overlay" id="habitOverlay" onclick="bgClose(event,'habitOverlay')">
+  <div class="modal">
+    <div class="handle"></div>
+    <h2 id="habitModalTitle">Nuevo Hábito</h2>
+    <div class="field"><label>Categoría</label>
+      <div class="cat-select-row">
+        <select id="fHabitCat"></select>
+        <button class="add-cat-btn" onclick="quickAddCat()" title="Nueva categoría">＋</button>
+      </div>
+    </div>
+    <div class="field"><label>Nombre del hábito</label>
+      <input type="text" id="fHName" placeholder="Ej: Correr, Vitamina C..." maxlength="40"/>
+    </div>
+    <div class="field"><label>🎯 Meta — número de días / sesiones</label>
+      <div class="goal-presets" id="goalPresets"></div>
+      <input type="number" id="fGoalDays" placeholder="O escribe el número..." min="1" max="730" oninput="syncGoalInput()"/>
+    </div>
+    <div class="field"><label>📅 Periodo del reto</label>
+      <div class="date-row">
         <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600;">INICIO</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600">INICIO</div>
           <input type="date" id="fStartDate"/>
         </div>
         <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600;">FECHA LÍMITE</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600">FECHA LÍMITE</div>
           <input type="date" id="fEndDate"/>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">💡 No tienen que ser días seguidos — puedes cumplir tu meta en cualquier día del periodo</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:7px;line-height:1.5">💡 No tienen que ser días seguidos — cumple tu meta cuando puedas dentro del periodo</div>
     </div>
-    <div class="field"><label>Ícono</label><div class="emoji-grid" id="emojiGrid"></div></div>
-    <div class="field"><label>Color</label><div class="color-row" id="colorRow"></div></div>
+    <div class="field"><label>Ícono</label><div class="emoji-grid" id="habitEmojiGrid"></div></div>
+    <div class="field"><label>Color</label><div class="color-row" id="habitColorRow"></div></div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-cancel" onclick="closeHabitModal()">Cancelar</button>
       <button class="btn-save" onclick="saveHabit()">Guardar ✓</button>
     </div>
   </div>
 </div>
 
-<!-- CONFIRMAR BORRAR -->
+<!-- CONFIRM -->
 <div class="conf-wrap" id="confWrap">
   <div class="conf-box">
-    <h3>¿Borrar hábito?</h3>
-    <p>Se perderá todo el progreso registrado.</p>
+    <h3 id="confTitle">¿Eliminar?</h3>
+    <p id="confMsg">Esta acción no se puede deshacer.</p>
     <div class="conf-btns">
       <button class="btn-no" onclick="closeConf()">Cancelar</button>
-      <button class="btn-del" onclick="doDelete()">Borrar</button>
+      <button class="btn-del" onclick="doDelete()">Eliminar</button>
     </div>
   </div>
 </div>
@@ -249,362 +305,564 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DATA ────────────────────────────────────────────────
-const KEY = 'habitos_v2';
-function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; } }
-function save(){ localStorage.setItem(KEY, JSON.stringify(habits)); }
+// ── STORAGE ────────────────────────────────────────────
+const KEY = 'habitos_v3';
+function loadData(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function saveData(){ localStorage.setItem(KEY, JSON.stringify(db)); }
 
-let habits = load();
+// db = { categories: [...], habits: [...] }
+let db = loadData();
+if(!db.categories) db.categories = [];
+if(!db.habits)     db.habits = [];
+
+// ── STATE ──────────────────────────────────────────────
+let curView = 1;
+let curCatId = null;
 let curHabitId = null;
-let editId = null;
-let deleteId = null;
-let selEmoji = '💊';
-let selColor = 'morado';
+let editCatId = null;
+let editHabitId = null;
+let deleteTarget = null;
+let deleteType = null;
+let selCatEmoji = '💪';
+let selCatColor = 'morado';
+let selCatBg = 'oscuro';
+let selHabitEmoji = '✅';
+let selHabitColor = 'morado';
 let selGoalDays = 0;
 let curYear = new Date().getFullYear();
 let curMonth = new Date().getMonth();
-const GOAL_PRESETS = [7, 21, 30, 66, 90, 0];
 
-const COLORS = {morado:'#7c6af5',verde:'#4ecdc4',rojo:'#ff6b6b',amarillo:'#f5a623',rosa:'#f472b6',azul:'#38bdf8',naranja:'#fb923c'};
+const COLORS = {morado:'#7c6af5',verde:'#4ecdc4',rojo:'#ff6b6b',amarillo:'#f5a623',rosa:'#f472b6',azul:'#38bdf8',naranja:'#fb923c'}; // kept for goal badges
+// CAT_COLORS: solid hex used as card bg; habits get lighter version
+const CAT_COLORS = {
+  rojo:      '#e8000d',
+  naranja:   '#ff6600',
+  amarillo:  '#e6b800',
+  verde:     '#00a832',
+  morado:    '#7b00e8',
+  azul:      '#0055ff',
+  guinda:    '#8b0000',
+  teal:      '#009688',
+  rosa:      '#e91e8c',
+  gris:      '#37474f',
+  cafe:      '#6d4c41',
+  limon:     '#aacc00',
+  azulAcero: '#1565c0',
+  violeta:   '#4a148c',
+  coral:     '#ff3d00',
+};
 const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const EMOJIS = ['💊','🏋️','🥗','💧','🧘','📚','🚶','😴','🧴','🎯','✅','🌟','🔥','💪','🧠','🫀','🏃','🍎','☕','🧪','🌿','🏊','🚴','🎵'];
+const CAT_EMOJIS  = ['💪','🧘','🏃','🏋️','🥗','📚','💼','🏠','💰','🎯','🌟','🧠','❤️','🎵','✈️','🌿','🔬','💊','🧪','🍎','🥦','🏊','🚴','⚡','🎯','🏆','🧬','💉','🫁','🦷','🌞','🌙','⭐','🔥','💧','🌊','🌱','🍃','🎨','🖊','📖','🎓','🎸','🎹','🎭','🏡','🛒','✈️','🚗','💳','💡','🔧','📱'];
+const HABIT_EMOJIS = ['💊','🏃','🥗','💧','🧘','📚','🚴','😴','🧴','✅','🔥','💪','🧠','🫀','🍎','☕','🧪','🌿','🏊','🎵','📝','💉','🌞','🥤'];
 const DSHORT = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+const GOAL_PRESETS = [{d:7,l:'7d'},{d:14,l:'14d'},{d:21,l:'21d'},{d:30,l:'30d'},{d:66,l:'66d'},{d:90,l:'90d'},{d:0,l:'Sin límite'}];
 
-// ── INIT ────────────────────────────────────────────────
+// ── INIT ───────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', ()=>{
-  buildPickers();
-  renderList();
+  renderCats();
 });
 
-// ── LIST VIEW ───────────────────────────────────────────
-function renderList(){
-  const list = document.getElementById('habitList');
-  const sub = document.getElementById('listSubtitle');
-  sub.textContent = habits.length ? habits.length+' hábito'+(habits.length>1?'s':'') : '';
+// ── NAVIGATION ─────────────────────────────────────────
+function goTo(v){
+  document.getElementById('v'+curView).classList.add('slide-right');
+  document.getElementById('v'+v).classList.remove('slide-right');
+  curView = v;
+  if(v===1) renderCats();
+  if(v===2) renderHabits();
+  if(v===3) renderCalendar();
+}
 
-  if(!habits.length){
-    list.innerHTML = '<div class="empty"><div class="empty-ico">📅</div><div class="empty-txt">Aún no tienes hábitos<br><small style="opacity:.7">Toca ＋ para agregar uno<br>Vitaminas, Ejercicio, Agua...</small></div></div>';
+// ── VIEW 1: CATEGORIES ─────────────────────────────────
+function renderCats(){
+  const list = document.getElementById('catList');
+  const sub  = document.getElementById('v1Sub');
+  sub.textContent = db.categories.length + ' categoría'+(db.categories.length!==1?'s':', crea la primera tocando ＋');
+
+  if(!db.categories.length){
+    list.innerHTML = '<div class="empty"><div class="empty-ico">🗂</div><div class="empty-txt">Sin categorías aún<br><small style="opacity:.7">Toca ＋ arriba para crear una<br>Ej: Salud, Fitness, Estudio...</small></div></div>';
     return;
   }
 
+  list.innerHTML = db.categories.map(cat => {
+    const catHabits = db.habits.filter(h=>h.catId===cat.id);
+    const solidColor = CAT_COLORS[cat.color||'morado'];
+    const accentColor = lightenColor(solidColor, 0.5); // 50% lighter for text/bar
+    const {done, total, pct} = getCatProgress(cat.id);
+    const doneToday = catHabits.filter(h=>isDoneToday(h)).length;
+    return `
+    <div class="cat-card" onclick="openCat('${cat.id}')" style="background:${solidColor};border-color:${solidColor};">
+      <div class="cat-card-top" style="margin-bottom:14px;">
+        <div class="cat-left">
+          <div class="cat-emoji" style="font-size:32px;">${cat.emoji||'🎯'}</div>
+          <div>
+            <div class="cat-name" style="font-size:20px;color:#fff;">${esc(cat.name)}</div>
+            <div class="cat-count" style="font-size:13px;color:rgba(255,255,255,.65);">${catHabits.length} hábito${catHabits.length!==1?'s':''}</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div class="cat-pct" style="color:#fff;font-size:34px;">${pct}%</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:2px;">${doneToday} de hoy ✓</div>
+        </div>
+      </div>
+      <div class="cat-prog" style="height:8px;background:rgba(0,0,0,.25);"><div class="cat-prog-fill" style="width:${pct}%;background:rgba(255,255,255,.85)"></div></div>
+      <div class="cat-prog-stats" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.7);">
+        <span>${done} sesiones este mes</span>
+        <span style="color:#fff;font-weight:700;">${pct}% completado</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getCatProgress(catId){
+  const habits = db.habits.filter(h=>h.catId===catId);
+  if(!habits.length) return {done:0,total:0,pct:0};
   const today = new Date();
   const mk = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0');
-  const daysInMonth = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+  const daysInMonth = new Date(today.getFullYear(),today.getMonth()+1,0).getDate();
+  let done=0, total=0;
+  habits.forEach(h=>{
+    done  += h.logs&&h.logs[mk] ? Object.keys(h.logs[mk]).filter(k=>h.logs[mk][k]).length : 0;
+    total += daysInMonth;
+  });
+  const pct = total>0 ? Math.round(done/total*100) : 0;
+  return {done, total, pct};
+}
 
-  list.innerHTML = habits.map(h => {
+function isDoneToday(h){
+  const today = new Date();
+  const mk = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0');
+  const dk = String(today.getDate()).padStart(2,'0');
+  return !!(h.logs&&h.logs[mk]&&h.logs[mk][dk]);
+}
+
+// ── VIEW 2: HABITS ─────────────────────────────────────
+function openCat(id){
+  curCatId = id;
+  goTo(2);
+}
+
+function renderHabits(){
+  const cat = db.categories.find(c=>c.id===curCatId);
+  if(!cat) return;
+  const color = COLORS[cat.color||'morado'];
+  const habits = db.habits.filter(h=>h.catId===curCatId);
+  const {done,total,pct} = getCatProgress(curCatId);
+  document.getElementById('v2Emoji').textContent = cat.emoji||'🎯';
+  document.getElementById('v2Name').textContent = cat.name;
+  document.getElementById('v2Sub').textContent = `${pct}% progreso este mes · ${habits.length} hábitos`;
+
+  const list = document.getElementById('habitList');
+  if(!habits.length){
+    list.innerHTML = '<div class="empty"><div class="empty-ico">✨</div><div class="empty-txt">Sin hábitos en esta categoría<br><small style="opacity:.7">Toca ＋ para agregar uno</small></div></div>';
+    return;
+  }
+  const today = new Date();
+  const mk = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0');
+  const daysInMonth = new Date(today.getFullYear(),today.getMonth()+1,0).getDate();
+
+  list.innerHTML = habits.map(h=>{
+    const catSolid = CAT_COLORS[cat.color||'morado'];
+    const hcolor = lightenColor(catSolid, 0.33); // 33% lighter for accent
+    const hbg = hexToRgba(catSolid, 0.33); // 33% opacity bg tint
     const done = h.logs&&h.logs[mk] ? Object.keys(h.logs[mk]).filter(k=>h.logs[mk][k]).length : 0;
     const pct = Math.round(done/daysInMonth*100);
-    const streak = getStreak(h);
-    const color = COLORS[h.color||'morado'];
-    const todayKey = String(today.getDate()).padStart(2,'0');
-    const doneToday = h.logs&&h.logs[mk]&&h.logs[mk][todayKey];
-    // Goal info
-    const goalInfo = getGoalInfo(h);
-    const goalBadge = goalInfo ? `<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;background:${goalInfo.bgColor};color:${goalInfo.color}">${goalInfo.label}</span>` : '';
+    const doneToday = isDoneToday(h);
+    const gi = getGoalInfo(h);
     return `
-    <div class="habit-row" onclick="openCalendar('${h.id}')">
-      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:${color};border-radius:4px 0 0 4px;"></div>
+    <div class="habit-row" onclick="openHabit('${h.id}')" style="background:${hbg};border-color:${hexToRgba(catSolid,0.3)};">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:${hcolor};border-radius:4px 0 0 4px;"></div>
       <div class="row-emoji">${h.emoji||'✅'}</div>
       <div class="row-info">
         <div class="row-name">${esc(h.name)}</div>
-        <div class="row-sub">
-          ${streak>0?`<span class="row-streak" style="color:${color}">🔥 ${streak}d seguidos</span>`:''}
-          ${goalBadge}
-          ${doneToday?`<span style="font-size:11px;color:var(--accent3);font-weight:600">✓ Hoy</span>`:''}
+        <div class="row-meta">
+          ${gi ? `<span class="row-badge" style="background:${gi.bgColor};color:${gi.color}">${gi.label}</span>` : ''}
+          ${doneToday ? `<span class="row-badge" style="background:rgba(78,205,196,.15);color:var(--accent3)">✓ Hoy</span>` : ''}
+          ${getStreak(h)>0 ? `<span class="row-badge" style="background:rgba(245,166,35,.15);color:var(--accent2)">🔥 ${getStreak(h)}d</span>` : ''}
         </div>
-        <div class="mini-prog"><div class="mini-fill" style="width:${goalInfo?goalInfo.pct:pct}%;background:${color}"></div></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">${goalInfo ? goalInfo.detail : done+'/'+daysInMonth+' días este mes · '+pct+'%'}</div>
+        <div class="mini-prog"><div class="mini-fill" style="width:${gi?gi.pct:pct}%;background:${hcolor}"></div></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">${gi ? gi.detail : done+'/'+daysInMonth+' días este mes'}</div>
       </div>
       <div style="display:flex;gap:2px;align-items:center;">
-        <button class="row-btn" onclick="event.stopPropagation();editHabit('${h.id}')">✏️</button>
-        <button class="row-btn" onclick="event.stopPropagation();askDelete('${h.id}')">🗑</button>
+        <button class="ic-btn" onclick="event.stopPropagation();editHabitModal('${h.id}')">✏️</button>
+        <button class="ic-btn" onclick="event.stopPropagation();askDelHabit('${h.id}')">🗑</button>
         <span class="row-arrow">›</span>
       </div>
     </div>`;
   }).join('');
 }
 
-
-// ── GOAL INFO ───────────────────────────────────────────
-function getGoalInfo(h){
-  if(!h.goalDays || h.goalDays===0) return null;
-  const start = h.startDate ? new Date(h.startDate+'T00:00:00') : new Date(h.created);
-  start.setHours(0,0,0,0);
-  // End date: explicit or calculated
-  let end;
-  if(h.endDate){
-    end = new Date(h.endDate+'T00:00:00');
-    end.setHours(0,0,0,0);
-  } else {
-    end = new Date(start);
-    end.setDate(end.getDate() + h.goalDays - 1);
-  }
-  const today = new Date(); today.setHours(0,0,0,0);
-  // Count only days within the period
-  const totalDone = getDoneInPeriod(h, start, end);
-  const pct = Math.min(100, Math.round(totalDone / h.goalDays * 100));
-  const daysLeft = Math.ceil((end - today) / 86400000);
-  // Calendar days remaining in period
-  const periodDays = Math.ceil((end - start) / 86400000) + 1;
-  const isCompleted = totalDone >= h.goalDays;
-  const isExpired = today > end && !isCompleted;
-  let label, color, bgColor, detail;
-  if(isCompleted){
-    label='🏆 ¡Meta lograda!'; color='#4ecdc4'; bgColor='rgba(78,205,196,.2)';
-    detail=totalDone+' de '+h.goalDays+' sesiones completadas ✓';
-  } else if(isExpired){
-    label='⏰ Venció'; color='#ff6b6b'; bgColor='rgba(255,107,107,.2)';
-    detail=totalDone+' de '+h.goalDays+' sesiones completadas';
-  } else {
-    const dl = daysLeft<=0 ? '¡Último día!' : daysLeft===1 ? '1 día restante' : daysLeft+'d restantes';
-    label=dl; color='#7c6af5'; bgColor='rgba(124,106,245,.2)';
-    detail=totalDone+' de '+h.goalDays+' sesiones · límite: '+fmtDate(end);
-  }
-  return {pct, label, color, bgColor, detail, totalDone, isCompleted, isExpired, daysLeft, end, start, periodDays};
-}
-
-function getDoneInPeriod(h, start, end){
-  if(!h.logs) return 0;
-  let total = 0;
-  const s = new Date(start); s.setHours(0,0,0,0);
-  const e = new Date(end);   e.setHours(23,59,59,999);
-  Object.entries(h.logs).forEach(([mk, days])=>{
-    const [yr, mo] = mk.split('-').map(Number);
-    Object.entries(days).forEach(([dk, done])=>{
-      if(!done) return;
-      const d = new Date(yr, mo-1, parseInt(dk));
-      if(d >= s && d <= e) total++;
-    });
-  });
-  return total;
-}
-
-function getTotalDone(h){
-  if(!h.logs) return 0;
-  let total = 0;
-  Object.values(h.logs).forEach(month => {
-    total += Object.values(month).filter(v=>v).length;
-  });
-  return total;
-}
-
-function fmtDate(d){
-  const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  return d.getDate()+' '+ms[d.getMonth()]+' '+d.getFullYear();
-}
-
-// ── CALENDAR VIEW ───────────────────────────────────────
-function openCalendar(id){
+function openHabit(id){
   curHabitId = id;
   curYear = new Date().getFullYear();
   curMonth = new Date().getMonth();
-  renderCalendar();
-  document.getElementById('listView').classList.add('hidden');
-  document.getElementById('calView').classList.remove('hidden');
+  goTo(3);
 }
 
-function goBack(){
-  document.getElementById('calView').classList.add('hidden');
-  document.getElementById('listView').classList.remove('hidden');
-  renderList();
-}
-
-function changeMonth(dir){
-  curMonth += dir;
-  if(curMonth>11){curMonth=0;curYear++;}
-  if(curMonth<0){curMonth=11;curYear--;}
-  renderCalendar();
-}
-
+// ── VIEW 3: CALENDAR ───────────────────────────────────
 function renderCalendar(){
-  const h = habits.find(x=>x.id===curHabitId);
+  const h = db.habits.find(x=>x.id===curHabitId);
   if(!h) return;
   const color = COLORS[h.color||'morado'];
-
   document.getElementById('calEmoji').textContent = h.emoji||'✅';
   document.getElementById('calName').textContent = h.name;
   document.getElementById('monthLabel').textContent = MONTHS[curMonth]+' '+curYear;
+  document.getElementById('calBackBtn').onclick = ()=>goTo(2);
 
   const today = new Date();
-  const isNow = (curYear===today.getFullYear()&&curMonth===today.getMonth());
-  const daysInMonth = new Date(curYear, curMonth+1, 0).getDate();
+  const isNow = curYear===today.getFullYear()&&curMonth===today.getMonth();
+  const daysInMonth = new Date(curYear,curMonth+1,0).getDate();
   const mk = curYear+'-'+String(curMonth+1).padStart(2,'0');
   const doneDays = h.logs&&h.logs[mk] ? Object.keys(h.logs[mk]).filter(k=>h.logs[mk][k]).length : 0;
   const pct = Math.round(doneDays/daysInMonth*100);
   const streak = getStreak(h);
+  const gi = getGoalInfo(h);
 
-  // Stats
-  const goalInfo = getGoalInfo(h);
   document.getElementById('calStats').innerHTML = `
     <div class="cstat"><div class="cstat-num" style="color:${color}">${doneDays}</div><div class="cstat-lbl">Este mes</div></div>
     <div class="cstat"><div class="cstat-num" style="color:var(--accent2)">${streak}</div><div class="cstat-lbl">🔥 Racha</div></div>
-    ${goalInfo ? `<div class="cstat"><div class="cstat-num" style="color:${goalInfo.color}">${goalInfo.totalDone}</div><div class="cstat-lbl">Meta total</div></div>` : `<div class="cstat"><div class="cstat-num" style="color:${color}">${daysInMonth-doneDays}</div><div class="cstat-lbl">Pendientes</div></div>`}
+    ${gi ? `<div class="cstat"><div class="cstat-num" style="color:${gi.color}">${gi.totalDone}</div><div class="cstat-lbl">Meta total</div></div>` : `<div class="cstat"><div class="cstat-num" style="color:${color}">${daysInMonth-doneDays}</div><div class="cstat-lbl">Quedan</div></div>`}
   `;
 
-  // Grid
-  let firstDay = new Date(curYear, curMonth, 1).getDay();
-  firstDay = firstDay===0 ? 6 : firstDay-1;
-
-  let cells = DSHORT.map(d=>`<div class="cdl">${d}</div>`).join('');
-  let grid = '';
+  let firstDay = new Date(curYear,curMonth,1).getDay();
+  firstDay = firstDay===0?6:firstDay-1;
+  let grid='';
   for(let i=0;i<firstDay;i++) grid+='<div class="cday empty"></div>';
   for(let d=1;d<=daysInMonth;d++){
-    const dk = String(d).padStart(2,'0');
-    const isDone = h.logs&&h.logs[mk]&&h.logs[mk][dk];
-    const isToday = isNow&&d===today.getDate();
-    const isFuture = isNow&&d>today.getDate();
+    const dk=String(d).padStart(2,'0');
+    const isDone=h.logs&&h.logs[mk]&&h.logs[mk][dk];
+    const isToday=isNow&&d===today.getDate();
+    const isFuture=isNow&&d>today.getDate();
     let cls='cday';
-    if(isDone) cls+=' done';
-    else if(isFuture) cls+=' future';
-    if(isToday&&!isDone) cls+=' today';
-    const bgStyle = isDone ? `style="background:${color};border-color:${color}"` : '';
+    if(isDone)cls+=' done'; else if(isFuture)cls+=' future';
+    if(isToday&&!isDone)cls+=' today';
+    const bgStyle=isDone?`style="background:${color};border-color:${color}"`:'';
     grid+=`<div class="${cls}" ${bgStyle} onclick="toggleDay('${mk}','${dk}')">${d}</div>`;
   }
 
-  const goalBanner = goalInfo ? `
-    <div class="goal-banner ${goalInfo.isCompleted?'completed':goalInfo.isExpired?'expired':''}">
+  const goalBanner = gi ? `
+    <div class="goal-banner ${gi.isCompleted?'completed':gi.isExpired?'expired':''}">
       <div class="gb-top">
-        <div class="gb-title">🎯 Meta: ${h.goalDays} días</div>
-        <div class="gb-badge ${goalInfo.isCompleted?'done':goalInfo.isExpired?'expired':'active'}">${goalInfo.label}</div>
+        <div class="gb-title">🎯 Meta: ${h.goalDays} sesiones</div>
+        <div class="gb-badge" style="background:${gi.bgColor};color:${gi.color}">${gi.label}</div>
       </div>
-      <div class="gb-prog"><div class="gb-fill" style="width:${goalInfo.pct}%;background:${color}"></div></div>
+      <div class="gb-prog"><div class="gb-fill" style="width:${gi.pct}%;background:${color}"></div></div>
       <div class="gb-stats">
-        <span>${goalInfo.totalDone} de ${h.goalDays} días completados</span>
-        <span style="font-weight:700;color:${color}">${goalInfo.pct}%</span>
+        <span>${gi.totalDone} de ${h.goalDays} sesiones</span>
+        <span style="font-weight:700;color:${color}">${gi.pct}%</span>
       </div>
-      ${!goalInfo.isCompleted && !goalInfo.isExpired ? `<div style="font-size:11px;color:var(--muted);margin-top:6px">📅 ${fmtDate(goalInfo.start)} → ${fmtDate(goalInfo.end)} · ${goalInfo.daysLeft} días restantes</div>` : ''}
+      ${!gi.isCompleted&&!gi.isExpired?`<div style="font-size:11px;color:var(--muted);margin-top:5px">📅 ${fmtDate(gi.start)} → ${fmtDate(gi.end)} · ${gi.daysLeft}d restantes</div>`:''}
     </div>` : '';
 
   document.getElementById('calGrid').innerHTML = `
     ${goalBanner}
-    <div class="cal-days-hdr">${cells}</div>
+    <div class="cal-days-hdr">${DSHORT.map(d=>'<div class="cdl">'+d+'</div>').join('')}</div>
     <div class="cal-grid">${grid}</div>
     <div class="cal-prog-wrap">
       <div class="cal-prog-label"><span>Progreso del mes</span><span style="color:${color};font-weight:700">${pct}%</span></div>
       <div class="cal-prog-bar"><div class="cal-prog-fill" style="width:${pct}%;background:${color}"></div></div>
     </div>
-    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">Total mes: <strong style="color:var(--text)">${doneDays} de ${daysInMonth} días</strong></div>
+    <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--muted)">Total mes: <strong style="color:var(--text)">${doneDays} de ${daysInMonth} días</strong></div>
   `;
 }
 
-function toggleDay(mk, dk){
-  const today = new Date();
-  const isNow = (curYear===today.getFullYear()&&curMonth===today.getMonth());
-  if(isNow && parseInt(dk)>today.getDate()) return;
-  const h = habits.find(x=>x.id===curHabitId);
-  if(!h) return;
-  if(!h.logs) h.logs={};
-  if(!h.logs[mk]) h.logs[mk]={};
-  h.logs[mk][dk] = !h.logs[mk][dk];
-  if(!h.logs[mk][dk]) delete h.logs[mk][dk];
-  save();
-  renderCalendar();
-  const done = h.logs[mk]&&h.logs[mk][dk];
-  if(done) toast('✅ ¡Marcado!');
+function toggleDay(mk,dk){
+  const today=new Date();
+  const isNow=curYear===today.getFullYear()&&curMonth===today.getMonth();
+  if(isNow&&parseInt(dk)>today.getDate()) return;
+  const h=db.habits.find(x=>x.id===curHabitId); if(!h) return;
+  if(!h.logs)h.logs={};
+  if(!h.logs[mk])h.logs[mk]={};
+  h.logs[mk][dk]=!h.logs[mk][dk];
+  if(!h.logs[mk][dk])delete h.logs[mk][dk];
+  saveData(); renderCalendar();
+  if(h.logs[mk]&&h.logs[mk][dk]) toast('✅ ¡Marcado!');
 }
 
-// ── STREAK ──────────────────────────────────────────────
+function changeMonth(dir){
+  curMonth+=dir;
+  if(curMonth>11){curMonth=0;curYear++;}
+  if(curMonth<0){curMonth=11;curYear--;}
+  renderCalendar();
+}
+
+// ── GOAL HELPERS ───────────────────────────────────────
+function getGoalInfo(h){
+  if(!h.goalDays||h.goalDays===0) return null;
+  const start = new Date((h.startDate||h.created.split('T')[0])+'T00:00:00');
+  start.setHours(0,0,0,0);
+  let end;
+  if(h.endDate){ end=new Date(h.endDate+'T00:00:00'); end.setHours(0,0,0,0); }
+  else{ end=new Date(start); end.setDate(end.getDate()+h.goalDays-1); }
+  const today=new Date(); today.setHours(0,0,0,0);
+  const totalDone=getDoneInPeriod(h,start,end);
+  const pct=Math.min(100,Math.round(totalDone/h.goalDays*100));
+  const daysLeft=Math.ceil((end-today)/86400000);
+  const isCompleted=totalDone>=h.goalDays;
+  const isExpired=today>end&&!isCompleted;
+  let label,color,bgColor,detail;
+  if(isCompleted){label='🏆 ¡Meta!';color='#4ecdc4';bgColor='rgba(78,205,196,.2)';detail=totalDone+' de '+h.goalDays+' ✓';}
+  else if(isExpired){label='⏰ Venció';color='#ff6b6b';bgColor='rgba(255,107,107,.2)';detail=totalDone+' de '+h.goalDays;}
+  else{const dl=daysLeft<=0?'¡Hoy!':daysLeft+'d';label=dl;color='#7c6af5';bgColor='rgba(124,106,245,.2)';detail=totalDone+'/'+h.goalDays+' · '+fmtDate(end);}
+  return{pct,label,color,bgColor,detail,totalDone,isCompleted,isExpired,daysLeft,end,start};
+}
+
+function getDoneInPeriod(h,start,end){
+  if(!h.logs) return 0;
+  let total=0;
+  const s=new Date(start);s.setHours(0,0,0,0);
+  const e=new Date(end);e.setHours(23,59,59,999);
+  Object.entries(h.logs).forEach(([mk,days])=>{
+    const[yr,mo]=mk.split('-').map(Number);
+    Object.entries(days).forEach(([dk,done])=>{
+      if(!done) return;
+      const d=new Date(yr,mo-1,parseInt(dk));
+      if(d>=s&&d<=e) total++;
+    });
+  });
+  return total;
+}
+
 function getStreak(h){
   if(!h.logs) return 0;
-  let streak=0, d=new Date();
+  let streak=0,d=new Date();
   for(let i=0;i<365;i++){
     const mk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     const dk=String(d.getDate()).padStart(2,'0');
     if(h.logs[mk]&&h.logs[mk][dk]) streak++;
-    else if(i===0){/* today not done yet */}
+    else if(i===0){/*today not yet*/}
     else break;
     d.setDate(d.getDate()-1);
   }
   return streak;
 }
 
-// ── PICKERS ─────────────────────────────────────────────
-function buildPickers(){
-  document.getElementById('emojiGrid').innerHTML = EMOJIS.map(e=>
-    `<button class="eo${e===selEmoji?' sel':''}" data-e="${e}" onclick="pickEmoji('${e}')">${e}</button>`
-  ).join('');
-  document.getElementById('colorRow').innerHTML = Object.entries(COLORS).map(([k,v])=>
-    `<div class="co${k===selColor?' sel':''}" data-c="${k}" style="background:${v}" onclick="pickColor('${k}')"></div>`
-  ).join('');
-  const labels = {7:'7 días',21:'21 días',30:'30 días',66:'66 días',90:'90 días',0:'Sin límite'};
-  document.getElementById('goalPresets').innerHTML = Object.entries(labels).map(([d,l])=>
-    `<button class="gp${parseInt(d)===selGoalDays?' sel':''}" data-d="${d}" onclick="pickGoal(${d})">${l}</button>`
-  ).join('');
+function lightenColor(hex, amount){
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  const nr=Math.round(r+(255-r)*amount), ng=Math.round(g+(255-g)*amount), nb=Math.round(b+(255-b)*amount);
+  return '#'+[nr,ng,nb].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-function pickGoal(d){
-  selGoalDays=d;
-  document.querySelectorAll('.gp').forEach(b=>b.classList.toggle('sel',parseInt(b.dataset.d)===d));
-  document.getElementById('fGoalDays').value = d>0?d:'';
+function hexToRgba(hex, alpha){
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+alpha+')';
 }
-function syncGoalInput(){
-  const v = parseInt(document.getElementById('fGoalDays').value)||0;
-  selGoalDays=v;
-  document.querySelectorAll('.gp').forEach(b=>b.classList.toggle('sel',parseInt(b.dataset.d)===v));
-}
-function pickEmoji(e){ selEmoji=e; document.querySelectorAll('.eo').forEach(b=>b.classList.toggle('sel',b.dataset.e===e)); }
-function pickColor(c){ selColor=c; document.querySelectorAll('.co').forEach(b=>b.classList.toggle('sel',b.dataset.c===c)); }
+function fmtDate(d){const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return d.getDate()+' '+ms[d.getMonth()];}
 
-// ── MODAL ───────────────────────────────────────────────
-function openModal(){
-  editId=null; selEmoji='💊'; selColor='morado'; selGoalDays=0;
-  document.getElementById('fName').value='';
+// ── CAT MODAL ──────────────────────────────────────────
+function openCatModal(){
+  editCatId=null; selCatEmoji='💪'; selCatColor='morado'; selCatBg='oscuro';
+  document.getElementById('fcName').value='';
+  document.getElementById('catModalTitle').textContent='Nueva Categoría';
+  buildPicker('catEmojiGrid',CAT_EMOJIS,selCatEmoji,pickCatEmoji);
+  buildBgPicker();
+  document.getElementById('catOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fcName').focus(),300);
+}
+function openCatModalEdit(id){
+  const cat=db.categories.find(c=>c.id===id); if(!cat) return;
+  editCatId=id; selCatEmoji=cat.emoji||'💪'; selCatBg=cat.color||'rojo';
+  document.getElementById('fcName').value=cat.name;
+  document.getElementById('catModalTitle').textContent='Editar Categoría';
+  buildPicker('catEmojiGrid',CAT_EMOJIS,selCatEmoji,pickCatEmoji);
+  buildBgPicker();
+  document.getElementById('catOverlay').classList.add('open');
+}
+function editCurCat(){ openCatModalEdit(curCatId); }
+function closeCatModal(){ document.getElementById('catOverlay').classList.remove('open'); }
+function pickCatEmoji(e){ selCatEmoji=e; buildPicker('catEmojiGrid',CAT_EMOJIS,selCatEmoji,pickCatEmoji); }
+function pickCatColor(k){ selCatColor=k; buildColorPicker('catColorRow',selCatColor,pickCatColor); }
+function pickCatBg(k){ selCatBg=k; buildBgPicker(); }
+function buildBgPicker(){
+  let html = '';
+  Object.entries(CAT_COLORS).forEach(function(entry){
+    const k = entry[0], v = entry[1];
+    const isSel = k === selCatBg;
+    const check = isSel ? '<span style="color:#fff;font-weight:700;font-size:18px">&#10003;</span>' : '';
+    html += '<div class="bgco' + (isSel ? ' sel' : '') + '"'
+          + ' style="background:' + v + ';border-color:' + (isSel ? '#fff' : v) + '"'
+          + ' data-k="' + k + '"'
+          + ' onclick="pickCatBg(this.dataset.k)">'
+          + check
+          + '</div>';
+  });
+  document.getElementById('catBgRow').innerHTML = html;
+}
+function saveCat(){
+  const name=document.getElementById('fcName').value.trim();
+  if(!name){toast('⚠️ Escribe el nombre');return;}
+  if(editCatId){
+    const cat=db.categories.find(c=>c.id===editCatId);
+    cat.name=name; cat.emoji=selCatEmoji; cat.color=selCatBg;
+    toast('✏️ Categoría actualizada');
+  } else {
+    db.categories.push({id:'c'+Date.now(),name,emoji:selCatEmoji,color:selCatBg});
+    toast('🗂 Categoría creada');
+  }
+  saveData(); closeCatModal(); renderCats();
+  if(curView===2) renderHabits();
+  // If user came from habit modal, reopen it with saved state
+  if(window._habitFormState){
+    const s = window._habitFormState;
+    window._habitFormState = null;
+    setTimeout(()=>{
+      openHabitModal();
+      document.getElementById('fHName').value = s.name||'';
+      document.getElementById('fGoalDays').value = s.goalDays||'';
+      document.getElementById('fStartDate').value = s.startDate||new Date().toISOString().split('T')[0];
+      document.getElementById('fEndDate').value = s.endDate||'';
+      // Select the newly created category
+      const newest = db.categories[db.categories.length-1];
+      if(newest) document.getElementById('fHabitCat').value = newest.id;
+    }, 300);
+  }
+}
+
+// ── HABIT MODAL ────────────────────────────────────────
+function openHabitModal(){
+  editHabitId=null; selHabitEmoji='✅'; selHabitColor='morado'; selGoalDays=0;
+  document.getElementById('fHName').value='';
   document.getElementById('fGoalDays').value='';
   document.getElementById('fStartDate').value=new Date().toISOString().split('T')[0];
   document.getElementById('fEndDate').value='';
-  buildPickers();
-  document.getElementById('mTitle').textContent='Nuevo Hábito';
-  document.getElementById('overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('fName').focus(),300);
+  document.getElementById('habitModalTitle').textContent='Nuevo Hábito';
+  buildCatSelect(curView===2?curCatId:null);
+  buildGoalPresets();
+  buildPicker('habitEmojiGrid',HABIT_EMOJIS,selHabitEmoji,pickHabitEmoji);
+  buildColorPicker('habitColorRow',selHabitColor,pickHabitColor);
+  document.getElementById('habitOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fHName').focus(),300);
 }
-function editHabit(id){
-  const h=habits.find(x=>x.id===id); if(!h) return;
-  editId=id; selEmoji=h.emoji||'💊'; selColor=h.color||'morado'; selGoalDays=h.goalDays||0;
-  document.getElementById('fName').value=h.name;
+function editHabitModal(id){
+  const h=db.habits.find(x=>x.id===id); if(!h) return;
+  editHabitId=id; selHabitEmoji=h.emoji||'✅'; selHabitColor=h.color||'morado'; selGoalDays=h.goalDays||0;
+  document.getElementById('fHName').value=h.name;
   document.getElementById('fGoalDays').value=h.goalDays||'';
   document.getElementById('fStartDate').value=h.startDate||new Date().toISOString().split('T')[0];
   document.getElementById('fEndDate').value=h.endDate||'';
-  buildPickers();
-  document.getElementById('mTitle').textContent='Editar Hábito';
-  document.getElementById('overlay').classList.add('open');
+  document.getElementById('habitModalTitle').textContent='Editar Hábito';
+  buildCatSelect(h.catId);
+  buildGoalPresets();
+  buildPicker('habitEmojiGrid',HABIT_EMOJIS,selHabitEmoji,pickHabitEmoji);
+  buildColorPicker('habitColorRow',selHabitColor,pickHabitColor);
+  document.getElementById('habitOverlay').classList.add('open');
 }
-function editCurrentHabit(){ editHabit(curHabitId); }
-function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
-function bgClose(e){ if(e.target===document.getElementById('overlay')) closeModal(); }
-function saveHabit(){
-  const name=document.getElementById('fName').value.trim();
-  if(!name){ toast('⚠️ Escribe el nombre'); return; }
-  const goalDays = parseInt(document.getElementById('fGoalDays').value)||0;
-  const startDate = document.getElementById('fStartDate').value || new Date().toISOString().split('T')[0];
-  const endDate = document.getElementById('fEndDate').value || '';
-  if(editId){
-    const h=habits.find(x=>x.id===editId);
-    h.name=name; h.emoji=selEmoji; h.color=selColor; h.goalDays=goalDays; h.startDate=startDate; h.endDate=endDate;
-    toast('✏️ Actualizado');
-  } else {
-    habits.push({id:'h'+Date.now(),name,emoji:selEmoji,color:selColor,goalDays,startDate,endDate,logs:{},created:new Date().toISOString()});
-    const goalMsg = goalDays>0 ? ' · Meta: '+goalDays+' días' : '';
-    toast('🎯 Hábito creado'+goalMsg);
+function editCurHabit(){ editHabitModal(curHabitId); }
+function closeHabitModal(){ document.getElementById('habitOverlay').classList.remove('open'); }
+function pickHabitEmoji(e){ selHabitEmoji=e; buildPicker('habitEmojiGrid',HABIT_EMOJIS,selHabitEmoji,pickHabitEmoji); }
+function pickHabitColor(c){ selHabitColor=c; buildColorPicker('habitColorRow',selHabitColor,pickHabitColor); }
+function pickGoal(d){ selGoalDays=d; document.getElementById('fGoalDays').value=d>0?d:''; buildGoalPresets(); }
+function syncGoalInput(){ selGoalDays=parseInt(document.getElementById('fGoalDays').value)||0; buildGoalPresets(); }
+
+function buildCatSelect(selectedId){
+  const sel=document.getElementById('fHabitCat');
+  if(!db.categories.length){
+    sel.innerHTML='<option value="">— Crea una categoría primero —</option>';
+    return;
   }
-  save(); closeModal(); renderList();
-  if(!document.getElementById('calView').classList.contains('hidden')) renderCalendar();
+  sel.innerHTML=db.categories.map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${c.emoji||'📁'} ${esc(c.name)}</option>`).join('');
 }
 
-// ── DELETE ──────────────────────────────────────────────
-function askDelete(id){ deleteId=id; document.getElementById('confWrap').classList.add('open'); }
-function askDeleteCurrent(){ askDelete(curHabitId); }
-function closeConf(){ document.getElementById('confWrap').classList.remove('open'); deleteId=null; }
+function buildGoalPresets(){
+  document.getElementById('goalPresets').innerHTML = GOAL_PRESETS.map(p=>
+    `<button class="gp${p.d===selGoalDays?' sel':''}" data-d="${p.d}" onclick="pickGoal(${p.d})">${p.l}</button>`
+  ).join('');
+}
+
+function quickAddCat(){
+  // Save current habit form state
+  window._habitFormState = {
+    name: document.getElementById('fHName').value,
+    goalDays: document.getElementById('fGoalDays').value,
+    startDate: document.getElementById('fStartDate').value,
+    endDate: document.getElementById('fEndDate').value,
+    emoji: selHabitEmoji,
+    color: selHabitColor,
+    goalDays2: selGoalDays,
+    editId: editHabitId,
+  };
+  closeHabitModal();
+  setTimeout(openCatModal, 250);
+}
+
+function saveHabit(){
+  const name=document.getElementById('fHName').value.trim();
+  if(!name){toast('⚠️ Escribe el nombre');return;}
+  const catId=document.getElementById('fHabitCat').value;
+  if(!catId){toast('⚠️ Selecciona una categoría');return;}
+  const goalDays=parseInt(document.getElementById('fGoalDays').value)||0;
+  const startDate=document.getElementById('fStartDate').value||new Date().toISOString().split('T')[0];
+  const endDate=document.getElementById('fEndDate').value||'';
+  if(editHabitId){
+    const h=db.habits.find(x=>x.id===editHabitId);
+    Object.assign(h,{name,catId,emoji:selHabitEmoji,color:selHabitColor,goalDays,startDate,endDate});
+    toast('✏️ Hábito actualizado');
+  } else {
+    db.habits.push({id:'h'+Date.now(),name,catId,emoji:selHabitEmoji,color:selHabitColor,goalDays,startDate,endDate,logs:{},created:new Date().toISOString()});
+    toast('🎯 Hábito creado'+(goalDays?' · Meta: '+goalDays+' sesiones':''));
+  }
+  saveData(); closeHabitModal();
+  if(curView===1) renderCats();
+  if(curView===2) renderHabits();
+  if(curView===3) renderCalendar();
+}
+
+// ── PICKERS ────────────────────────────────────────────
+function buildPicker(gridId, emojis, sel, fn){
+  document.getElementById(gridId).innerHTML = emojis.map(e=>
+    `<button class="eo${e===sel?' sel':''}" onclick="(${fn.name}||${fn})('${e}')">${e}</button>`
+  ).join('');
+  // Re-attach with correct function
+  document.getElementById(gridId).querySelectorAll('.eo').forEach((btn,i)=>{
+    btn.onclick = ()=>fn(emojis[i]);
+  });
+}
+function buildColorPicker(rowId, sel, fn){
+  document.getElementById(rowId).innerHTML = Object.entries(COLORS).map(([k,v])=>
+    `<div class="co${k===sel?' sel':''}" style="background:${v}" onclick="(()=>{})()"></div>`
+  ).join('');
+  document.getElementById(rowId).querySelectorAll('.co').forEach((el,i)=>{
+    const key = Object.keys(COLORS)[i];
+    el.onclick = ()=>fn(key);
+  });
+}
+
+// ── DELETE ─────────────────────────────────────────────
+function askDelCat(id){
+  deleteTarget=id; deleteType='cat';
+  const cat=db.categories.find(c=>c.id===id);
+  const count=db.habits.filter(h=>h.catId===id).length;
+  document.getElementById('confTitle').textContent='¿Eliminar categoría?';
+  document.getElementById('confMsg').textContent=`Se eliminará "${cat?.name}" y sus ${count} hábito${count!==1?'s':''}.`;
+  document.getElementById('confWrap').classList.add('open');
+}
+function askDeleteCat(){ askDelCat(curCatId); }
+function askDelHabit(id){
+  deleteTarget=id; deleteType='habit';
+  const h=db.habits.find(x=>x.id===id);
+  document.getElementById('confTitle').textContent='¿Eliminar hábito?';
+  document.getElementById('confMsg').textContent=`Se perderá todo el progreso de "${h?.name}".`;
+  document.getElementById('confWrap').classList.add('open');
+}
+function askDeleteHabit(){ askDelHabit(curHabitId); }
+function closeConf(){ document.getElementById('confWrap').classList.remove('open'); }
 function doDelete(){
-  habits=habits.filter(x=>x.id!==deleteId);
-  save(); closeConf();
-  if(deleteId===curHabitId) goBack();
-  else renderList();
-  toast('🗑 Eliminado');
+  if(deleteType==='cat'){
+    db.habits=db.habits.filter(h=>h.catId!==deleteTarget);
+    db.categories=db.categories.filter(c=>c.id!==deleteTarget);
+    saveData(); closeConf(); goTo(1);
+    toast('🗑 Categoría eliminada');
+  } else {
+    db.habits=db.habits.filter(h=>h.id!==deleteTarget);
+    saveData(); closeConf();
+    if(curView===3) goTo(2); else { renderHabits(); renderCats(); }
+    toast('🗑 Hábito eliminado');
+  }
 }
 
-// ── UTILS ───────────────────────────────────────────────
+// ── UTILS ──────────────────────────────────────────────
+function bgClose(e,id){ if(e.target===document.getElementById(id)) document.getElementById(id).classList.remove('open'); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeCatModal(); closeHabitModal(); } });
 </script>
 </body>
 </html>
