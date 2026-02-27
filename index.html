@@ -176,7 +176,12 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   <div class="hdr">
     <div class="hdr-row">
       <div class="app-title">Mis<span>Hábitos</span></div>
-      <button class="ic-btn" onclick="openCatModal()" style="font-size:22px;color:var(--accent)">＋</button>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="ic-btn" onclick="exportData()" title="Exportar respaldo" style="font-size:18px;">💾</button>
+        <button class="ic-btn" onclick="document.getElementById('importFile').click()" title="Importar respaldo" style="font-size:18px;">📂</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"/>
+        <button class="ic-btn" onclick="openCatModal()" style="font-size:22px;color:var(--accent)">＋</button>
+      </div>
     </div>
     <div class="hdr-sub" id="v1Sub"></div>
   </div>
@@ -307,7 +312,28 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
 <script>
 // ── STORAGE ────────────────────────────────────────────
 const KEY = 'habitos_v3';
-function loadData(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+function loadData(){
+  try{
+    // Try current key first
+    let d = JSON.parse(localStorage.getItem(KEY)||'null');
+    if(d) return d;
+    // Migrate from older keys
+    for(const old of ['habitos_v2','habitos_v1','mis_habitos_v1']){
+      const old_d = localStorage.getItem(old);
+      if(old_d){
+        try{
+          const parsed = JSON.parse(old_d);
+          // old format was array of habits - convert
+          if(Array.isArray(parsed)){
+            return {categories:[], habits: parsed};
+          }
+          return parsed;
+        }catch(e){}
+      }
+    }
+    return {};
+  }catch(e){ return {}; }
+}
 function saveData(){ localStorage.setItem(KEY, JSON.stringify(db)); }
 
 // db = { categories: [...], habits: [...] }
@@ -863,6 +889,45 @@ function bgClose(e,id){ if(e.target===document.getElementById(id)) document.getE
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeCatModal(); closeHabitModal(); } });
+
+// ── EXPORT / IMPORT ────────────────────────────────────
+function exportData(){
+  const json = JSON.stringify(db, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = 'mis-habitos-respaldo-' + date + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('💾 Respaldo guardado');
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const parsed = JSON.parse(e.target.result);
+      if(!parsed.categories && !parsed.habits){
+        toast('⚠️ Archivo no válido');
+        return;
+      }
+      db.categories = parsed.categories || [];
+      db.habits = parsed.habits || [];
+      saveData();
+      renderCats();
+      toast('✅ Datos restaurados correctamente');
+    } catch(err){
+      toast('⚠️ Error al leer el archivo');
+    }
+    // Reset input
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
 </script>
 </body>
 </html>
