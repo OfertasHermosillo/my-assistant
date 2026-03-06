@@ -2128,7 +2128,11 @@ function renderBv3(){
     el.innerHTML = `<div class="empty" style="padding:40px 0"><div class="empty-ico">🧾</div><div class="empty-txt">Sin gastos<br><small>Toca ＋ para agregar</small></div></div>`;
     return;
   }
-  el.innerHTML = [...gastos].sort((a,b)=>gastoPrice(b)-gastoPrice(a)).map(g => {
+  el.innerHTML = [...gastos].sort((a,b)=>{
+    const aA = a.activo!==false, bA = b.activo!==false;
+    if(aA !== bA) return aA ? -1 : 1;
+    return gastoPrice(b)-gastoPrice(a);
+  }).map(g => {
     const activo = g.activo !== false;
     const precioEfectivo = gastoPrice(g);
     const gpct = ctotal>0 ? Math.round(precioEfectivo/ctotal*100) : 0;
