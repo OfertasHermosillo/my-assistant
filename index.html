@@ -560,6 +560,7 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   </div>
   <div class="scroll" id="bv3list"></div>
   <button class="fab" style="background:linear-gradient(135deg,#f5a623,#fb923c);bottom:80px;" onclick="openModalGasto(null)">＋</button>
+  <button onclick="abrirCatalogo()" style="position:fixed;bottom:148px;right:20px;z-index:50;background:var(--card);border:1px solid var(--border);color:var(--accent3);padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">📦 Catálogo</button>
 </div>
 
 <!-- BV4 Lista de compras -->
@@ -595,6 +596,16 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
     </div>
     <div class="field"><label>Color</label>
       <div class="bg-color-grid" id="bColorGrid"></div>
+    </div>
+    <div class="field">
+      <label>Tiendas de este presupuesto</label>
+      <div id="bStoresTags" style="display:flex;flex-wrap:wrap;gap:6px;min-height:20px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="bStoreName" placeholder="Ej: Costco, Mercado..." maxlength="40"
+          style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:12px;font-size:14px;font-family:'Outfit',sans-serif;"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();agregarTiendaB();}"/>
+        <button onclick="agregarTiendaB()" style="background:var(--accent3);border:none;color:#fff;padding:10px 16px;border-radius:12px;font-size:18px;cursor:pointer;">＋</button>
+      </div>
     </div>
     <div class="field">
       <div class="shop-toggle" onclick="toggleModoCompras()">
@@ -647,9 +658,6 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
       <div style="display:flex;gap:8px;align-items:center;">
         <select id="gOpcTienda" style="flex:1.5;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:12px;font-size:14px;font-family:'Outfit',sans-serif;">
           <option value="">— Tienda</option>
-          <option>Soriana</option><option>Abarrey</option><option>Oxxo</option>
-          <option>Walmart</option><option>Ley Express</option>
-          <option>Tienda Abarrotes</option><option>Aurrera</option>
         </select>
         <div class="currency-input" style="flex:1;">
           <span class="currency-symbol">$</span>
@@ -662,6 +670,21 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
     <div class="modal-btns">
       <button class="btn-cancel" onclick="cerrarModalGasto()">Cancelar</button>
       <button class="btn-save" onclick="guardarGasto()">Guardar ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CATÁLOGO -->
+<div class="overlay" id="mCatalogo" onclick="bgClose(event,'mCatalogo')">
+  <div class="modal">
+    <div class="handle"></div>
+    <h2>📦 Catálogo de Productos</h2>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Toca un producto para agregarlo a esta categoría. Los precios se actualizan automáticamente.</div>
+    <input type="text" id="catSearch" placeholder="🔍 Buscar producto..." oninput="renderCatalogo()"
+      style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:12px;font-size:14px;font-family:'Outfit',sans-serif;box-sizing:border-box;margin-bottom:10px;"/>
+    <div id="catalogoLista" style="display:flex;flex-direction:column;gap:6px;max-height:400px;overflow-y:auto;"></div>
+    <div class="modal-btns" style="margin-top:12px;">
+      <button class="btn-cancel" onclick="cerrarCatalogo()">Cerrar</button>
     </div>
   </div>
 </div>
@@ -1947,7 +1970,32 @@ function onDragEnd(e){
 // ══════════════════════════════════════════════════════
 // PRESUPUESTOS — reescrito desde cero
 // ══════════════════════════════════════════════════════
-const B_EMOJIS = ['💰','🛒','🏠','✈️','💒','🎓','🏥','🚗','🎉','🛠','👗','🍽','🎁','📦','🌍'];
+const B_EMOJIS = [
+  // Compras y presupuesto
+  '💰','💵','💳','🪙','💸','🏦','📊','🧾','🛒','🛍️','📦','🎁',
+  // Frutas y verduras
+  '🍎','🍊','🍋','🍇','🍓','🫐','🍑','🍒','🍍','🥭','🍌','🍉',
+  '🥝','🍅','🥑','🫒','🌽','🥕','🧅','🧄','🥦','🥬','🥒','🫑',
+  '🍆','🥔','🌶️','🫛','🥜','🫘',
+  // Carnes y proteínas
+  '🥩','🍗','🍖','🥚','🐟','🦐','🦑','🥓','🌭',
+  // Lácteos y abarrotes
+  '🥛','🧀','🧈','🍞','🥐','🫙','🥫','🧂','🍚','🌾','🫓','🥣',
+  // Cocina y comida preparada
+  '🍳','🥘','🍲','🥗','🍜','🍝','🌮','🌯','🥙','🧆','🥚','🍱',
+  '🍛','🍣','🍕','🧇','🥞','🧁','🎂','🍰','🍩','🍪','🍫','🍬',
+  // Bebidas
+  '☕','🍵','🧃','🥤','💧','🧋','🍺','🥂',
+  // Hogar y limpieza
+  '🏠','🏡','🛋️','🪑','🛏️','🚿','🛁','🪴','🖼️','🪞','🚪','🪟',
+  '🧹','🧺','🧻','🪣','🧼','🫧','🧽','🪠','🚽','🪥','💡','🔌',
+  // Ropa y personal
+  '👗','👕','👖','👟','👠','🧥','🧣','🧤','🧢','💄','💅','🪒',
+  // Salud y farmacia
+  '💊','🩺','🏥','🧬','🩹','🌡️','🧴','🧷',
+  // Otros gastos
+  '🚗','✈️','🎓','🎉','🛠','📱','💻','🎮','📚','🏋️','🎨','🌍'
+];
 const TIENDAS  = ['Soriana','Abarrey','Oxxo','Walmart','Ley Express','Tienda Abarrotes','Aurrera'];
 
 let bData       = [];   // presupuestos
@@ -1960,10 +2008,43 @@ let bEmoji      = '💰';
 let bColor      = 'azul';
 let bShop       = false;
 let catEmoji    = '🛒';
-let gOpciones   = [];   // opciones [{tienda,precio}] en modal
-let gSelOpc     = null; // índice seleccionado
+let gOpciones   = [];
+let gSelOpc     = null;
+let bTempStores = [];   // tiendas en modal de presupuesto
 
 function bLoad(){ try{ return JSON.parse(localStorage.getItem('bdata_v1')||'[]'); }catch(e){ return []; } }
+function catLoad(){ try{ return JSON.parse(localStorage.getItem('catalogo_v1')||'[]'); }catch(e){ return []; } }
+function catSave(){ localStorage.setItem('catalogo_v1', JSON.stringify(catalogo)); }
+let catalogo = catLoad();
+
+function sincronizarCatalogo(){
+  // Scan all existing gastos and add to catalog if not already there
+  let added = 0;
+  (bData||[]).forEach(b=>{
+    (b.cats||[]).forEach(cat=>{
+      (cat.gastos||[]).forEach(g=>{
+        if(!g.nombre) return;
+        const existe = catalogo.find(x=>x.nombre.toLowerCase()===g.nombre.toLowerCase());
+        if(!existe){
+          catalogo.push({id:'c'+Date.now()+'_'+Math.random().toString(36).slice(2),
+            nombre:g.nombre, nota:g.nota||'',
+            opciones:JSON.parse(JSON.stringify(g.opciones||[])),
+            created:g.created||new Date().toISOString()});
+          added++;
+        } else {
+          // Update opciones if new tiendas found
+          (g.opciones||[]).forEach(op=>{
+            if(!existe.opciones) existe.opciones=[];
+            const tExists = existe.opciones.find(o=>o.tienda===op.tienda);
+            if(!tExists) existe.opciones.push({tienda:op.tienda,precio:op.precio});
+          });
+        }
+      });
+    });
+  });
+  if(added>0) catSave();
+}
+sincronizarCatalogo();
 function bSave(){ localStorage.setItem('bdata_v1', JSON.stringify(bData)); }
 bData = bLoad();
 
@@ -2187,24 +2268,43 @@ function resetCompras(){
 // ── HELPERS ─────────────────────────────────────────
 function bTotales(b){
   const total=Number(b.monto)||0;
-  const gastado=(b.cats||[]).reduce((s,cat)=>(cat.gastos||[]).reduce((ss,g)=>ss+gastoPrice(g),s),0);
+  const gastado=(b.cats||[]).reduce((s,cat)=>(cat.gastos||[]).reduce((ss,g)=>ss+(g.activo===false?0:gastoPrice(g)),s),0);
   const balance=total-gastado;
   const pct=total>0?Math.min(Math.round(gastado/total*100),999):0;
   return {total,gastado,balance,pct};
 }
-function catGastado(cat){ return (cat.gastos||[]).reduce((s,g)=>s+gastoPrice(g),0); }
+function catGastado(cat){ return (cat.gastos||[]).reduce((s,g)=>s+(g.activo===false?0:gastoPrice(g)),0); }
 
 // ── MODAL PRESUPUESTO ────────────────────────────────
 function openModalPresupuesto(id){
-  bEditId=id; bEmoji='💰'; bColor='azul'; bShop=false;
+  bEditId=id; bEmoji='💰'; bColor='azul'; bShop=false; bTempStores=[];
   document.getElementById('mPresupuestoTitulo').textContent = id?'Editar Presupuesto':'Nuevo Presupuesto';
-  if(id){ const b=bData.find(x=>x.id===id); if(b){document.getElementById('bNombre').value=b.name;document.getElementById('bMonto').value=b.monto;bEmoji=b.emoji||'💰';bColor=b.color||'azul';bShop=b.shopMode||false;} }
-  else { document.getElementById('bNombre').value=''; document.getElementById('bMonto').value=''; }
+  if(id){
+    const b=bData.find(x=>x.id===id);
+    if(b){ document.getElementById('bNombre').value=b.name; document.getElementById('bMonto').value=b.monto; bEmoji=b.emoji||'💰'; bColor=b.color||'azul'; bShop=b.shopMode||false; bTempStores=(b.stores||[]).slice(); }
+  } else {
+    document.getElementById('bNombre').value=''; document.getElementById('bMonto').value='';
+  }
   buildPicker('bEmojiGrid',B_EMOJIS,bEmoji,e=>{bEmoji=e;buildPicker('bEmojiGrid',B_EMOJIS,bEmoji,arguments.callee);});
   buildBColorPicker();
   document.getElementById('bShopToggle').className='toggle-track'+(bShop?' on':'');
+  renderBStoresTags();
   document.getElementById('mPresupuesto').classList.add('open');
   setTimeout(()=>document.getElementById('bNombre').focus(),300);
+}
+function renderBStoresTags(){
+  document.getElementById('bStoresTags').innerHTML = bTempStores.map((s,i)=>`
+    <div style="display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 10px;">
+      <span style="font-size:13px;">🏪 ${esc(s)}</span>
+      <button onclick="bTempStores.splice(${i},1);renderBStoresTags();" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px;">✕</button>
+    </div>`).join('');
+}
+function agregarTiendaB(){
+  const inp = document.getElementById('bStoreName');
+  const val = inp.value.trim();
+  if(!val) return;
+  if(bTempStores.includes(val)){ toast('Ya existe esa tienda'); return; }
+  bTempStores.push(val); inp.value=''; renderBStoresTags();
 }
 function cerrarModalPresupuesto(){ document.getElementById('mPresupuesto').classList.remove('open'); }
 function toggleModoCompras(){ bShop=!bShop; document.getElementById('bShopToggle').className='toggle-track'+(bShop?' on':''); }
@@ -2217,8 +2317,8 @@ function guardarPresupuesto(){
   if(!name){toast('⚠️ Escribe el nombre');return;}
   const monto=parseFloat(document.getElementById('bMonto').value)||0;
   if(!monto){toast('⚠️ Escribe el monto total');return;}
-  if(bEditId){ const b=bData.find(x=>x.id===bEditId); b.name=name;b.monto=monto;b.emoji=bEmoji;b.color=bColor;b.shopMode=bShop; toast('✏️ Actualizado'); }
-  else { bData.push({id:'b'+Date.now(),name,monto,emoji:bEmoji,color:bColor,shopMode:bShop,cats:[],created:new Date().toISOString()}); toast('💰 Presupuesto creado'); }
+  if(bEditId){ const b=bData.find(x=>x.id===bEditId); b.name=name;b.monto=monto;b.emoji=bEmoji;b.color=bColor;b.shopMode=bShop;b.stores=bTempStores.slice(); toast('✏️ Actualizado'); }
+  else { bData.push({id:'b'+Date.now(),name,monto,emoji:bEmoji,color:bColor,shopMode:bShop,stores:bTempStores.slice(),cats:[],created:new Date().toISOString()}); toast('💰 Presupuesto creado'); }
   bSave(); cerrarModalPresupuesto(); renderBv1();
   if(bEditId) renderBv2();
 }
@@ -2307,6 +2407,12 @@ function agregarOpcion(){
   document.getElementById('gOpcPrecio').value='';
   renderGOpcList();
 }
+function poblarTiendasSelect(){
+  const b=bData.find(x=>x.id===curBid);
+  const stores = b ? (b.stores||[]) : [];
+  const sel = document.getElementById('gOpcTienda');
+  sel.innerHTML = '<option value="">— Tienda</option>' + stores.map(s=>`<option>${esc(s)}</option>`).join('');
+}
 function openModalGasto(id){
   gastoEditId=id; gOpciones=[]; gSelOpc=null;
   document.getElementById('mGastoTitulo').textContent=id?'Editar Gasto':'Nuevo Gasto';
@@ -2318,6 +2424,7 @@ function openModalGasto(id){
   } else {
     document.getElementById('gNombre').value=''; document.getElementById('gNota').value='';
   }
+  poblarTiendasSelect();
   renderGOpcList();
   document.getElementById('mGasto').classList.add('open');
   setTimeout(()=>document.getElementById('gNombre').focus(),300);
@@ -2341,6 +2448,59 @@ function eliminarGasto(id){
   const cat=(b.cats||[]).find(x=>x.id===curCatId); if(!cat) return;
   cat.gastos=cat.gastos.filter(x=>x.id!==id);
   bSave(); renderBv3(); renderBv2(); toast('🗑 Gasto eliminado');
+}
+function toggleActivoGasto(id){
+  const b=bData.find(x=>x.id===curBid); if(!b) return;
+  const cat=(b.cats||[]).find(x=>x.id===curCatId); if(!cat) return;
+  const g=(cat.gastos||[]).find(x=>x.id===id); if(!g) return;
+  g.activo = g.activo===false ? true : false;
+  bSave(); renderBv3(); renderBv2();
+  toast(g.activo===false?'🔴 Producto desactivado':'🟢 Producto activado');
+}
+
+// ── CATÁLOGO ──────────────────────────────────────
+function abrirCatalogo(){
+  document.getElementById('catSearch').value='';
+  renderCatalogo();
+  document.getElementById('mCatalogo').classList.add('open');
+}
+function cerrarCatalogo(){ document.getElementById('mCatalogo').classList.remove('open'); }
+function renderCatalogo(){
+  const q = document.getElementById('catSearch').value.trim().toLowerCase();
+  const lista = document.getElementById('catalogoLista');
+  const items = catalogo.filter(x=>!q || x.nombre.toLowerCase().includes(q));
+  if(!items.length){
+    lista.innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Sin productos en el catálogo aún.<br>Agrega gastos y se guardarán aquí.</div>`;
+    return;
+  }
+  lista.innerHTML = items.map(ci => {
+    const mejorPrecio = ci.opciones&&ci.opciones.length ? Math.min(...ci.opciones.map(o=>o.precio)) : 0;
+    const tiendas = ci.opciones ? ci.opciones.map(o=>o.tienda).join(', ') : '';
+    return `<div onclick="agregarDesdeCatalogo('${ci.id}')" style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:600;">${esc(ci.nombre)}</div>
+        ${tiendas?`<div style="font-size:11px;color:var(--muted);margin-top:2px;">🏪 ${esc(tiendas)}</div>`:''}
+        ${ci.nota?`<div style="font-size:11px;color:var(--muted);">${esc(ci.nota)}</div>`:''}
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        ${mejorPrecio?`<div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--accent2);">desde $${mejorPrecio.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>`:''}
+        <div style="font-size:11px;color:var(--accent3);margin-top:2px;">＋ Agregar</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function agregarDesdeCatalogo(cid){
+  const ci = catalogo.find(x=>x.id===cid); if(!ci) return;
+  const b=bData.find(x=>x.id===curBid); if(!b) return;
+  const cat=(b.cats||[]).find(x=>x.id===curCatId); if(!cat) return;
+  if(!cat.gastos) cat.gastos=[];
+  cat.gastos.push({
+    id:'g'+Date.now(), nombre:ci.nombre, nota:ci.nota||'',
+    opciones:JSON.parse(JSON.stringify(ci.opciones||[])),
+    selOpc:0, activo:true, comprado:false, created:new Date().toISOString()
+  });
+  bSave(); cerrarCatalogo(); renderBv3(); renderBv2();
+  toast('✅ '+ci.nombre+' agregado');
 }
 
 // ── EXPORT / IMPORT ────────────────────────────────────
