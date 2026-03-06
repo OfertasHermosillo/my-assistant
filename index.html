@@ -560,7 +560,7 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   </div>
   <div class="scroll" id="bv3list"></div>
   <button class="fab" style="background:linear-gradient(135deg,#f5a623,#fb923c);bottom:80px;" onclick="openModalGasto(null)">＋</button>
-  <button onclick="abrirCatalogo()" style="position:fixed;bottom:148px;right:20px;z-index:50;background:var(--card);border:1px solid var(--border);color:var(--accent3);padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">📦 Catálogo</button>
+
 </div>
 
 <!-- BV4 Lista de compras -->
@@ -632,7 +632,7 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
       <input type="text" id="catNombre" placeholder="Ej: Abarrotes, Carnicería..." maxlength="50"/>
     </div>
     <div class="field"><label>Ícono</label>
-      <div class="emoji-grid" id="catEmojiGrid"></div>
+      <div class="emoji-grid" id="bCatEmojiGrid"></div>
     </div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="cerrarModalCategoria()">Cancelar</button>
@@ -674,20 +674,7 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   </div>
 </div>
 
-<!-- MODAL CATÁLOGO -->
-<div class="overlay" id="mCatalogo" onclick="bgClose(event,'mCatalogo')">
-  <div class="modal">
-    <div class="handle"></div>
-    <h2>📦 Catálogo de Productos</h2>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Toca un producto para agregarlo a esta categoría. Los precios se actualizan automáticamente.</div>
-    <input type="text" id="catSearch" placeholder="🔍 Buscar producto..." oninput="renderCatalogo()"
-      style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:12px;font-size:14px;font-family:'Outfit',sans-serif;box-sizing:border-box;margin-bottom:10px;"/>
-    <div id="catalogoLista" style="display:flex;flex-direction:column;gap:6px;max-height:400px;overflow-y:auto;"></div>
-    <div class="modal-btns" style="margin-top:12px;">
-      <button class="btn-cancel" onclick="cerrarCatalogo()">Cerrar</button>
-    </div>
-  </div>
-</div>
+
 
 <!-- MODAL: NUEVO PROYECTO -->
 <div class="overlay" id="projOverlay" onclick="bgClose(event,'projOverlay')">
@@ -2013,38 +2000,9 @@ let gSelOpc     = null;
 let bTempStores = [];   // tiendas en modal de presupuesto
 
 function bLoad(){ try{ return JSON.parse(localStorage.getItem('bdata_v1')||'[]'); }catch(e){ return []; } }
-function catLoad(){ try{ return JSON.parse(localStorage.getItem('catalogo_v1')||'[]'); }catch(e){ return []; } }
-function catSave(){ localStorage.setItem('catalogo_v1', JSON.stringify(catalogo)); }
-let catalogo = catLoad();
 
-function sincronizarCatalogo(){
-  // Scan all existing gastos and add to catalog if not already there
-  let added = 0;
-  (bData||[]).forEach(b=>{
-    (b.cats||[]).forEach(cat=>{
-      (cat.gastos||[]).forEach(g=>{
-        if(!g.nombre) return;
-        const existe = catalogo.find(x=>x.nombre.toLowerCase()===g.nombre.toLowerCase());
-        if(!existe){
-          catalogo.push({id:'c'+Date.now()+'_'+Math.random().toString(36).slice(2),
-            nombre:g.nombre, nota:g.nota||'',
-            opciones:JSON.parse(JSON.stringify(g.opciones||[])),
-            created:g.created||new Date().toISOString()});
-          added++;
-        } else {
-          // Update opciones if new tiendas found
-          (g.opciones||[]).forEach(op=>{
-            if(!existe.opciones) existe.opciones=[];
-            const tExists = existe.opciones.find(o=>o.tienda===op.tienda);
-            if(!tExists) existe.opciones.push({tienda:op.tienda,precio:op.precio});
-          });
-        }
-      });
-    });
-  });
-  if(added>0) catSave();
-}
-sincronizarCatalogo();
+
+
 function bSave(){ localStorage.setItem('bdata_v1', JSON.stringify(bData)); }
 bData = bLoad();
 
@@ -2170,9 +2128,10 @@ function renderBv3(){
     el.innerHTML = `<div class="empty" style="padding:40px 0"><div class="empty-ico">🧾</div><div class="empty-txt">Sin gastos<br><small>Toca ＋ para agregar</small></div></div>`;
     return;
   }
-  el.innerHTML = [...gastos].sort((a,b)=>b.precio-a.precio).map(g => {
-    const gpct = ctotal>0 ? Math.round(g.precio/ctotal*100) : 0;
+  el.innerHTML = [...gastos].sort((a,b)=>gastoPrice(b)-gastoPrice(a)).map(g => {
+    const activo = g.activo !== false;
     const precioEfectivo = gastoPrice(g);
+    const gpct = ctotal>0 ? Math.round(precioEfectivo/ctotal*100) : 0;
     const opcsHTML = (g.opciones||[]).map((op,oi) => `
       <div onclick="seleccionarOpcion('${g.id}',${oi})" style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:10px;background:${g.selOpc===oi?'rgba(78,205,196,.12)':'var(--bg)'};border:1px solid ${g.selOpc===oi?'var(--accent3)':'var(--border)'};cursor:pointer;margin-top:5px;">
         <div style="display:flex;align-items:center;gap:8px;">
@@ -2189,6 +2148,7 @@ function renderBv3(){
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px;">
           <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--accent2);">$${precioEfectivo.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>
+          <button class="ic-btn" onclick="toggleActivoGasto('${g.id}')" title="${activo?'Desactivar':'Activar'}">${activo?'🟢':'🔴'}</button>
           <button class="ic-btn" onclick="openModalGasto('${g.id}')">✏️</button>
           <button class="ic-btn" onclick="eliminarGasto('${g.id}')">🗑</button>
         </div>
@@ -2337,7 +2297,7 @@ function openModalCategoria(id){
   const b=bData.find(x=>x.id===curBid); if(!b) return;
   if(id){ const cat=(b.cats||[]).find(x=>x.id===id); if(cat){document.getElementById('catNombre').value=cat.name;catEmoji=cat.emoji||'🛒';} }
   else document.getElementById('catNombre').value='';
-  buildPicker('catEmojiGrid',B_EMOJIS,catEmoji,e=>{catEmoji=e;buildPicker('catEmojiGrid',B_EMOJIS,catEmoji,arguments.callee);});
+  buildPicker('bCatEmojiGrid',B_EMOJIS,catEmoji,e=>{catEmoji=e;buildPicker('bCatEmojiGrid',B_EMOJIS,catEmoji,arguments.callee);});
   document.getElementById('mCategoria').classList.add('open');
   setTimeout(()=>document.getElementById('catNombre').focus(),300);
 }
@@ -2458,50 +2418,7 @@ function toggleActivoGasto(id){
   toast(g.activo===false?'🔴 Producto desactivado':'🟢 Producto activado');
 }
 
-// ── CATÁLOGO ──────────────────────────────────────
-function abrirCatalogo(){
-  document.getElementById('catSearch').value='';
-  renderCatalogo();
-  document.getElementById('mCatalogo').classList.add('open');
-}
-function cerrarCatalogo(){ document.getElementById('mCatalogo').classList.remove('open'); }
-function renderCatalogo(){
-  const q = document.getElementById('catSearch').value.trim().toLowerCase();
-  const lista = document.getElementById('catalogoLista');
-  const items = catalogo.filter(x=>!q || x.nombre.toLowerCase().includes(q));
-  if(!items.length){
-    lista.innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Sin productos en el catálogo aún.<br>Agrega gastos y se guardarán aquí.</div>`;
-    return;
-  }
-  lista.innerHTML = items.map(ci => {
-    const mejorPrecio = ci.opciones&&ci.opciones.length ? Math.min(...ci.opciones.map(o=>o.precio)) : 0;
-    const tiendas = ci.opciones ? ci.opciones.map(o=>o.tienda).join(', ') : '';
-    return `<div onclick="agregarDesdeCatalogo('${ci.id}')" style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;">
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:14px;font-weight:600;">${esc(ci.nombre)}</div>
-        ${tiendas?`<div style="font-size:11px;color:var(--muted);margin-top:2px;">🏪 ${esc(tiendas)}</div>`:''}
-        ${ci.nota?`<div style="font-size:11px;color:var(--muted);">${esc(ci.nota)}</div>`:''}
-      </div>
-      <div style="text-align:right;flex-shrink:0;">
-        ${mejorPrecio?`<div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--accent2);">desde $${mejorPrecio.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>`:''}
-        <div style="font-size:11px;color:var(--accent3);margin-top:2px;">＋ Agregar</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function agregarDesdeCatalogo(cid){
-  const ci = catalogo.find(x=>x.id===cid); if(!ci) return;
-  const b=bData.find(x=>x.id===curBid); if(!b) return;
-  const cat=(b.cats||[]).find(x=>x.id===curCatId); if(!cat) return;
-  if(!cat.gastos) cat.gastos=[];
-  cat.gastos.push({
-    id:'g'+Date.now(), nombre:ci.nombre, nota:ci.nota||'',
-    opciones:JSON.parse(JSON.stringify(ci.opciones||[])),
-    selOpc:0, activo:true, comprado:false, created:new Date().toISOString()
-  });
-  bSave(); cerrarCatalogo(); renderBv3(); renderBv2();
-  toast('✅ '+ci.nombre+' agregado');
-}
+
 
 // ── EXPORT / IMPORT ────────────────────────────────────
 function exportData(){
