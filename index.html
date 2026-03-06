@@ -9,6 +9,7 @@
 <meta name="theme-color" content="#0d0d14"/>
 <title>Mis Hábitos</title>
 <link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#0d0d14;--surface:#13131f;--card:#1a1a2e;--border:#252540;--accent:#7c6af5;--accent2:#f5a623;--accent3:#4ecdc4;--danger:#ff6b6b;--text:#f0f0ff;--muted:#6b6b8a;--radius:16px;}
@@ -171,6 +172,62 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
 .circ-bg{fill:none;stroke:rgba(255,255,255,.15);stroke-width:4;}
 .circ-fill{fill:none;stroke:rgba(255,255,255,.9);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .5s;}
 .circ-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#fff;}
+
+/* ── BUDGET ── */
+.budget-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;cursor:pointer;transition:transform .15s;animation:sIn .25s ease;overflow:hidden;}
+.budget-card:active{transform:scale(.97);}
+.budget-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.budget-total-lbl{font-size:11px;color:var(--muted);font-weight:300;margin-top:1px;}
+.budget-amount{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.budget-balance{display:flex;gap:10px;margin-top:10px;}
+.b-stat{flex:1;background:var(--bg);border-radius:12px;padding:10px;text-align:center;}
+.b-stat-num{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;}
+.b-stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+.cat-budget-row{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;animation:sIn .2s ease;transition:transform .15s;}
+.cat-budget-row:active{transform:scale(.98);}
+.cb-name{font-size:15px;font-weight:600;}
+.cb-pct-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:8px 0 4px;}
+.cb-pct-fill{height:100%;border-radius:3px;transition:width .5s;}
+.cb-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+.sub-budget-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;animation:sIn .2s ease;}
+.sub-budget-name{font-size:14px;font-weight:500;flex:1;}
+.sub-budget-price{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--accent2);}
+.budget-summary{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;}
+.currency-input{display:flex;align-items:center;gap:0;background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.currency-symbol{padding:11px 12px;color:var(--muted);font-weight:600;font-size:15px;background:var(--bg);border-right:1px solid var(--border);}
+.currency-input input{flex:1;background:transparent;border:none;color:var(--text);padding:11px 12px;font-size:15px;font-family:'Outfit',sans-serif;}
+.currency-input input:focus{outline:none;}
+
+/* ── EXPENSE OPTIONS & SHOPPING LIST ── */
+.option-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .15s;}
+.option-row.selected{border-color:var(--accent3);background:rgba(78,205,196,.08);}
+.option-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.option-row.selected .option-radio{border-color:var(--accent3);background:var(--accent3);}
+.option-radio-dot{width:8px;height:8px;border-radius:50%;background:#fff;display:none;}
+.option-row.selected .option-radio-dot{display:block;}
+.option-store{flex:1;font-size:14px;font-weight:500;}
+.option-price{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--accent2);}
+.option-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 6px;}
+.add-option-row{display:flex;gap:6px;margin-top:8px;}
+.add-option-row input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:11px;font-size:13px;font-family:'Outfit',sans-serif;}
+.add-option-row input:focus{outline:none;border-color:var(--accent);}
+.opt-store-inp{flex:2;}
+.opt-price-inp{flex:1;}
+.add-option-row button{background:var(--accent3);border:none;color:#fff;width:38px;height:38px;border-radius:11px;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.shop-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:13px;animation:sIn .2s ease;}
+.shop-check{width:24px;height:24px;border-radius:8px;border:2px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;transition:all .2s;flex-shrink:0;}
+.shop-check.done{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.shop-item-name{flex:1;font-size:14px;font-weight:500;}
+.shop-item-name.done{text-decoration:line-through;opacity:.4;}
+.shop-item-price{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--accent2);}
+.shop-item-price.done{opacity:.4;}
+.shop-group-hdr{padding:8px 4px 4px;font-size:11px;color:var(--accent3);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:8px;}
+.shop-total-bar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.shop-toggle{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:13px;cursor:pointer;margin-bottom:6px;}
+.toggle-track{width:42px;height:24px;border-radius:12px;background:var(--border);position:relative;transition:background .2s;flex-shrink:0;}
+.toggle-track.on{background:var(--accent3);}
+.toggle-thumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggle-track.on .toggle-thumb{left:21px;}
 
 /* ── DRAG TO REORDER ── */
 .drag-handle{cursor:grab;color:var(--muted);font-size:18px;padding:6px 4px;flex-shrink:0;touch-action:none;user-select:none;}
@@ -393,6 +450,9 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   <button class="nav-btn" id="navProyectos" onclick="switchSection('proyectos')">
     <span class="nav-ico">🚀</span>Proyectos
   </button>
+  <button class="nav-btn" id="navPresupuestos" onclick="switchSection('presupuestos')">
+    <span class="nav-ico">💰</span>Presupuestos
+  </button>
 </div>
 
 <!-- ═══ SECCIÓN PROYECTOS ═══ -->
@@ -450,6 +510,171 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
     <div style="margin-top:10px;" id="pv3Progress"></div>
   </div>
   <div class="scroll" id="subtaskList">
+  </div>
+</div>
+
+<!-- ═══ SECCIÓN PRESUPUESTOS ═══ -->
+<!-- BV1: Lista de presupuestos -->
+<div class="view slide-right" id="bv1">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="app-title">Mis<span style="color:#f5a623">Presupuestos</span></div>
+      <button class="ic-btn" onclick="openBudgetModal()" style="font-size:22px;color:var(--accent2)">＋</button>
+    </div>
+    <div class="hdr-sub" id="bv1Sub"></div>
+  </div>
+  <div class="scroll" id="budgetList"></div>
+  <button class="fab" style="background:linear-gradient(135deg,#f5a623,#fb923c);bottom:80px;" onclick="openBudgetModal()">＋</button>
+</div>
+
+<!-- BV2: Categorías del presupuesto -->
+<div class="view slide-right" id="bv2">
+  <div class="hdr">
+    <div class="hdr-row">
+      <button class="back-btn" onclick="goToBudget(1)" style="color:var(--accent2)">‹ Presupuestos</button>
+      <div style="display:flex;gap:4px;">
+        <button class="ic-btn" onclick="editCurBudget()">✏️</button>
+        <button class="ic-btn" onclick="askDeleteCurBudget()">🗑</button>
+      </div>
+    </div>
+    <div style="margin-top:8px;">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;" id="bv2Name"></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="bv2Sub"></div>
+    </div>
+    <div id="bv2Summary" style="margin-top:10px;"></div>
+  </div>
+  <div class="scroll" id="budgetCatList"></div>
+  <button class="fab" style="background:linear-gradient(135deg,#f5a623,#fb923c);bottom:80px;" onclick="openBudgetCatModal()">＋</button>
+</div>
+
+<!-- BV3: Subcategorías con precios -->
+<div class="view slide-right" id="bv3">
+  <div class="hdr">
+    <div class="hdr-row">
+      <button class="back-btn" onclick="goToBudget(2)" style="color:var(--accent2)">‹ Categorías</button>
+      <div style="display:flex;gap:4px;">
+        <button class="ic-btn" onclick="editCurBudgetCat()">✏️</button>
+        <button class="ic-btn" onclick="askDeleteCurBudgetCat()">🗑</button>
+      </div>
+    </div>
+    <div style="margin-top:8px;">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;" id="bv3CatName"></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="bv3CatSub"></div>
+    </div>
+    <div id="bv3Summary" style="margin-top:10px;"></div>
+  </div>
+  <div class="scroll" id="budgetSubList"></div>
+  <button class="fab" style="background:linear-gradient(135deg,#f5a623,#fb923c);bottom:80px;" onclick="openBudgetSubModal()">＋</button>
+</div>
+
+<!-- BV4: Lista de compras del presupuesto -->
+<div class="view slide-right" id="bv4">
+  <div class="hdr">
+    <div class="hdr-row">
+      <button class="back-btn" onclick="goToBudget(1)" style="color:var(--accent2)">‹ Presupuestos</button>
+      <button class="ic-btn" onclick="resetShoppingList()" title="Desmarcar todo" style="font-size:16px">↺</button>
+    </div>
+    <div style="margin-top:6px;">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;" id="bv4Name"></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="bv4Sub"></div>
+    </div>
+    <div id="bv4TotalBar" style="margin-top:10px;"></div>
+  </div>
+  <div class="scroll" id="shoppingList"></div>
+</div>
+
+<!-- MODAL: NUEVO/EDITAR PRESUPUESTO -->
+<div class="overlay" id="budgetOverlay" onclick="bgClose(event,'budgetOverlay')">
+  <div class="modal">
+    <div class="handle"></div>
+    <h2 id="budgetModalTitle">Nuevo Presupuesto</h2>
+    <div class="field"><label>Nombre del presupuesto</label>
+      <input type="text" id="fbName" placeholder="Ej: Boda, Remodelación, Negocio..." maxlength="50"/>
+    </div>
+    <div class="field"><label>Presupuesto total</label>
+      <div class="currency-input">
+        <span class="currency-symbol">$</span>
+        <input type="number" id="fbTotal" placeholder="0.00" min="0" step="0.01"/>
+      </div>
+    </div>
+    <div class="field"><label>Ícono</label>
+      <div class="emoji-grid" id="budgetEmojiGrid"></div>
+    </div>
+    <div class="field"><label>Color</label>
+      <div class="bg-color-grid" id="budgetColorRow"></div>
+    </div>
+    <div class="shop-toggle" onclick="toggleBudgetShopping()">
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:600;">🛒 Activar lista de compras</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">Aparecerá un botón para ir tachando productos</div>
+      </div>
+      <div class="toggle-track" id="shopToggleTrack"><div class="toggle-thumb"></div></div>
+    </div>
+    <div class="field">
+      <label>Tiendas del presupuesto <span style="color:var(--muted);font-size:11px;font-weight:400">— para elegir al agregar gastos</span></label>
+      <div id="storeTagsList" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;min-height:28px;"></div>
+      <div class="add-option-row">
+        <input class="opt-store-inp" type="text" id="newStoreName" placeholder="Ej: Soriana, Walmart, Abarrey..." maxlength="40"
+          onkeydown="if(event.key==='Enter')addBudgetStore()"/>
+        <button onclick="addBudgetStore()" style="background:var(--accent2);">＋</button>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeBudgetModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveBudget()">Guardar ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVA/EDITAR CATEGORÍA DE PRESUPUESTO -->
+<div class="overlay" id="budgetCatOverlay" onclick="bgClose(event,'budgetCatOverlay')">
+  <div class="modal">
+    <div class="handle"></div>
+    <h2 id="budgetCatModalTitle">Nueva Categoría</h2>
+    <div class="field"><label>Nombre de la categoría</label>
+      <input type="text" id="fbcName" placeholder="Ej: Comida, Transporte, Decoración..." maxlength="50"/>
+    </div>
+    <div class="field"><label>Ícono</label>
+      <div class="emoji-grid" id="budgetCatEmojiGrid"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeBudgetCatModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveBudgetCat()">Guardar ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVA/EDITAR SUBCATEGORÍA CON PRECIO -->
+<div class="overlay" id="budgetSubOverlay" onclick="bgClose(event,'budgetSubOverlay')">
+  <div class="modal">
+    <div class="handle"></div>
+    <h2 id="budgetSubModalTitle">Nuevo Gasto</h2>
+    <div class="field"><label>Descripción del producto</label>
+      <input type="text" id="fbsName" placeholder="Ej: Leche, Flores, Pintura..." maxlength="60"/>
+    </div>
+    <div class="field"><label>Precio base (sin opciones)</label>
+      <div class="currency-input">
+        <span class="currency-symbol">$</span>
+        <input type="number" id="fbsAmount" placeholder="0.00" min="0" step="0.01"/>
+      </div>
+    </div>
+    <div class="field"><label>Nota (opcional)</label>
+      <input type="text" id="fbsNote" placeholder="Referencia, detalle..." maxlength="80"/>
+    </div>
+    <div class="field">
+      <label>Opciones por tienda <span style="color:var(--muted);font-size:11px;font-weight:400">— elige la mejor opción</span></label>
+      <div id="optionsList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+      <div id="storePickerBtns" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+      <div class="add-option-row">
+        <input class="opt-price-inp" type="number" id="optStorePrice" placeholder="Precio de la tienda seleccionada" min="0" step="0.01" style="flex:1"/>
+        <button onclick="addExpenseOption()">＋</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;">💡 Toca una tienda, escribe el precio y presiona ＋. Luego selecciona la mejor opción.</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeBudgetSubModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveBudgetSub()">Guardar ✓</button>
+    </div>
   </div>
 </div>
 
@@ -1198,26 +1423,21 @@ function switchSection(sec){
   if(!isHabitos) renderProjects();
 }
 
-// Better approach: use z-index layers instead
 function switchSection(sec){
   curSection = sec;
-  const isHabitos = sec === 'habitos';
-  document.getElementById('navHabitos').classList.toggle('active', isHabitos);
-  document.getElementById('navProyectos').classList.toggle('active', !isHabitos);
-  // Habit views
-  document.getElementById('v1').style.zIndex = isHabitos ? 10 : 0;
-  document.getElementById('v2').style.zIndex = isHabitos ? 10 : 0;
-  document.getElementById('v3').style.zIndex = isHabitos ? 10 : 0;
-  // Project views
-  document.getElementById('pv1').style.zIndex = !isHabitos ? 10 : 0;
-  document.getElementById('pv2').style.zIndex = !isHabitos ? 10 : 0;
-  document.getElementById('pv3').style.zIndex = !isHabitos ? 10 : 0;
-  if(!isHabitos){
-    document.getElementById('pv1').classList.remove('slide-right');
-    renderProjects();
-  } else {
-    if(curView===1) document.getElementById('v1').classList.remove('slide-right');
-  }
+  document.getElementById('navHabitos').classList.toggle('active', sec==='habitos');
+  document.getElementById('navProyectos').classList.toggle('active', sec==='proyectos');
+  document.getElementById('navPresupuestos').classList.toggle('active', sec==='presupuestos');
+  // z-index per section
+  const hZ = sec==='habitos' ? 10 : 0;
+  const pZ = sec==='proyectos' ? 10 : 0;
+  const bZ = sec==='presupuestos' ? 10 : 0;
+  ['v1','v2','v3'].forEach(id=>document.getElementById(id).style.zIndex=hZ);
+  ['pv1','pv2','pv3'].forEach(id=>document.getElementById(id).style.zIndex=pZ);
+  ['bv1','bv2','bv3','bv4'].forEach(id=>document.getElementById(id).style.zIndex=bZ);
+  if(sec==='habitos' && curView===1) document.getElementById('v1').classList.remove('slide-right');
+  if(sec==='proyectos'){ document.getElementById('pv1').classList.remove('slide-right'); renderProjects(); }
+  if(sec==='presupuestos'){ document.getElementById('bv1').classList.remove('slide-right'); renderBudgets(); }
 }
 
 // ── PROJECTS DATA ───────────────────────────────────────
@@ -1641,16 +1861,24 @@ const _origDoDelete = doDelete;
 doDelete = function(){
   if(deleteType==='project'){
     projects=projects.filter(x=>x.id!==deleteTarget);
-    saveProjects(); closeConf();
-    goToProj(1);
+    saveProjects(); closeConf(); goToProj(1);
     toast('🗑 Proyecto eliminado');
   } else if(deleteType==='task'){
     const {projId, taskId} = deleteTarget;
     const p = projects.find(x=>x.id===projId);
     if(p) p.tasks = p.tasks.filter(x=>x.id!==taskId);
-    saveProjects(); closeConf();
-    goToProj(2);
+    saveProjects(); closeConf(); goToProj(2);
     toast('🗑 Tarea eliminada');
+  } else if(deleteType==='budget'){
+    budgets=budgets.filter(x=>x.id!==deleteTarget);
+    saveBudgets(); closeConf(); goToBudget(1);
+    toast('🗑 Presupuesto eliminado');
+  } else if(deleteType==='budgetCat'){
+    const {budgetId,catId} = deleteTarget;
+    const b=budgets.find(x=>x.id===budgetId);
+    if(b) b.cats=b.cats.filter(x=>x.id!==catId);
+    saveBudgets(); closeConf(); goToBudget(2);
+    toast('🗑 Categoría eliminada');
   } else {
     _origDoDelete();
   }
@@ -1747,9 +1975,662 @@ function onDragEnd(e){
   dragRenderFunc();
 }
 
+
+// ═══════════════════════════════════════════════════════
+// ── PRESUPUESTOS ────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+const BUDGET_EMOJIS = ['💰','💸','💳','🏦','🪙','💵','📊','📈','🛒','🏡','💒','✈️','🎓','🏥','🎉','🛠','🚗','👗','🍽','🎁','🧾','📦','🏋️','🎨','🌍'];
+let budgets = [];
+let curBudgetId = null;
+let curBudgetCatId = null;
+let editBudgetId = null;
+let editBudgetCatId = null;
+let editBudgetSubId = null;
+let selBudgetEmoji = '💰';
+let selBudgetColor = 'azul';
+let selBudgetCatEmoji = '📋';
+
+function loadBudgets(){ try{ return JSON.parse(localStorage.getItem('presupuestos_v1')||'[]'); }catch(e){ return []; } }
+function saveBudgets(){ localStorage.setItem('presupuestos_v1', JSON.stringify(budgets)); }
+budgets = loadBudgets();
+
+function fmtMoney(n){
+  if(!n && n!==0) return '$0';
+  return '$'+Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function getBudgetTotals(b){
+  let spent = 0;
+  (b.cats||[]).forEach(cat=>{
+    (cat.items||[]).forEach(it=>{ spent += getEffectivePrice(it); });
+  });
+  const total = Number(b.total)||0;
+  const balance = total - spent;
+  const pct = total > 0 ? Math.min(100, Math.round(spent/total*100)) : 0;
+  return {total, spent, balance, pct};
+}
+
+function getCatTotal(cat){
+  return (cat.items||[]).reduce((s,it)=>s+getEffectivePrice(it),0);
+}
+
+// ── NAV ─────────────────────────────────────────────────
+function goToBudget(v){
+  if(v===1){
+    ['bv2','bv3','bv4'].forEach(id=>document.getElementById(id).classList.add('slide-right'));
+    document.getElementById('bv1').classList.remove('slide-right');
+    renderBudgets();
+  } else if(v===2){
+    document.getElementById('bv3').classList.add('slide-right');
+    document.getElementById('bv1').classList.add('slide-right');
+    document.getElementById('bv2').classList.remove('slide-right');
+    renderBudgetCats();
+  } else {
+    document.getElementById('bv1').classList.add('slide-right');
+    document.getElementById('bv2').classList.add('slide-right');
+    document.getElementById('bv3').classList.remove('slide-right');
+    renderBudgetSubs();
+  }
+}
+
+// ── RENDER: LISTA DE PRESUPUESTOS ───────────────────────
+function renderBudgets(){
+  const list = document.getElementById('budgetList');
+  document.getElementById('bv1Sub').textContent = budgets.length+' presupuesto'+(budgets.length!==1?'s':'');
+  if(!budgets.length){
+    list.innerHTML='<div class="empty"><div class="empty-ico">💰</div><div class="empty-txt">Sin presupuestos aún<br><small>Toca ＋ para crear uno</small></div></div>';
+    return;
+  }
+  list.innerHTML = budgets.map(b=>{
+    const {total,spent,balance,pct} = getBudgetTotals(b);
+    const color = CAT_COLORS[b.color||'azul'];
+    const isOver = balance < 0;
+    return `
+    <div class="budget-card" data-id="${b.id}" onclick="openBudget('${b.id}')" style="border-left:5px solid ${color};">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+          <div style="font-size:26px">${b.emoji||'💰'}</div>
+          <div style="min-width:0;">
+            <div class="budget-name">${esc(b.name)}</div>
+            <div class="budget-total-lbl">Presupuesto: ${fmtMoney(total)}</div>
+          </div>
+        </div>
+        ${circleHTML(pct)}
+      </div>
+      <div class="budget-balance">
+        <div class="b-stat">
+          <div class="b-stat-num" style="color:var(--danger)">${fmtMoney(spent)}</div>
+          <div class="b-stat-lbl">Gastado</div>
+        </div>
+        <div class="b-stat">
+          <div class="b-stat-num" style="color:${isOver?'var(--danger)':'var(--accent3)'}">${fmtMoney(Math.abs(balance))}</div>
+          <div class="b-stat-lbl">${isOver?'⚠️ Exceso':'✅ Sobrante'}</div>
+        </div>
+        <div class="b-stat">
+          <div class="b-stat-num" style="color:${color}">${(b.cats||[]).length}</div>
+          <div class="b-stat-lbl">Categorías</div>
+        </div>
+      </div>
+      <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:10px;">
+        <div style="width:${Math.min(pct,100)}%;height:100%;background:${isOver?'var(--danger)':color};border-radius:2px;transition:width .5s;"></div>
+      </div>
+      ${b.shoppingMode?`<button onclick="event.stopPropagation();openShoppingList('${b.id}')" style="margin-top:10px;width:100%;padding:9px;background:rgba(78,205,196,.15);border:1px solid var(--accent3);border-radius:10px;color:var(--accent3);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">🛒 Abrir lista de compras</button>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openBudget(id){
+  curBudgetId = id;
+  goToBudget(2);
+}
+
+// ── RENDER: CATEGORÍAS DEL PRESUPUESTO ──────────────────
+function renderBudgetCats(){
+  const b = budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  const {total,spent,balance,pct} = getBudgetTotals(b);
+  const isOver = balance < 0;
+  const color = CAT_COLORS[b.color||'azul'];
+
+  document.getElementById('bv2Name').textContent = (b.emoji||'💰')+' '+b.name;
+  document.getElementById('bv2Sub').textContent = (b.cats||[]).length+' categorías · '+pct+'% del presupuesto usado';
+
+  document.getElementById('bv2Summary').innerHTML = `
+    <div class="budget-summary">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div>
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Total presupuestado</div>
+          <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;">${fmtMoney(total)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">${isOver?'⚠️ Exceso':'✅ Sobrante'}</div>
+          <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:${isOver?'var(--danger)':'var(--accent3)'};">${fmtMoney(Math.abs(balance))}</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;">
+        <span>Gastado: ${fmtMoney(spent)}</span><span>${pct}%</span>
+      </div>
+      <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+        <div style="width:${Math.min(pct,100)}%;height:100%;background:${isOver?'var(--danger)':color};border-radius:3px;transition:width .5s;"></div>
+      </div>
+    </div>`;
+
+  const list = document.getElementById('budgetCatList');
+  const cats = b.cats||[];
+  if(!cats.length){
+    list.innerHTML='<div class="empty" style="padding:40px 0"><div class="empty-ico">📋</div><div class="empty-txt">Sin categorías aún<br><small>Toca ＋ para agregar una</small></div></div>';
+    return;
+  }
+  const ACCENT_COLORS = ['#7c6af5','#4ecdc4','#f5a623','#ff6b6b','#f472b6','#38bdf8','#fb923c','#a78bfa','#34d399','#fbbf24'];
+  list.innerHTML = cats.map((cat,i)=>{
+    const catTotal = getCatTotal(cat);
+    const catPct = total > 0 ? Math.round(catTotal/total*100) : 0;
+    const acColor = ACCENT_COLORS[i % ACCENT_COLORS.length];
+    return `
+    <div class="cat-budget-row" onclick="openBudgetCat('${cat.id}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:20px">${cat.emoji||'📋'}</span>
+          <span class="cb-name">${esc(cat.name)}</span>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:${acColor}">${fmtMoney(catTotal)}</div>
+          <div style="font-size:10px;color:var(--muted)">${catPct}% del total</div>
+        </div>
+      </div>
+      <div class="cb-pct-bar"><div class="cb-pct-fill" style="width:${catPct}%;background:${acColor}"></div></div>
+      <div class="cb-meta">
+        <span>${(cat.items||[]).length} gasto${(cat.items||[]).length!==1?'s':''}</span>
+        <span>${catPct}% del presupuesto</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openBudgetCat(catId){
+  curBudgetCatId = catId;
+  goToBudget(3);
+}
+
+// ── RENDER: SUBCATEGORÍAS / GASTOS ─────────────────────
+function renderBudgetSubs(){
+  const b = budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  const cat = (b.cats||[]).find(x=>x.id===curBudgetCatId); if(!cat) return;
+  const {total} = getBudgetTotals(b);
+  const catTotal = getCatTotal(cat);
+  const catPct = total > 0 ? Math.round(catTotal/total*100) : 0;
+
+  document.getElementById('bv3CatName').textContent = (cat.emoji||'📋')+' '+cat.name;
+  document.getElementById('bv3CatSub').textContent = fmtMoney(catTotal)+' · '+catPct+'% del presupuesto total';
+
+  document.getElementById('bv3Summary').innerHTML = `
+    <div style="display:flex;gap:8px;">
+      <div class="pstat"><div class="pstat-num" style="color:var(--accent2)">${fmtMoney(catTotal)}</div><div class="pstat-lbl">Total cat.</div></div>
+      <div class="pstat"><div class="pstat-num" style="color:var(--accent3)">${fmtMoney(total)}</div><div class="pstat-lbl">Presup. total</div></div>
+      <div class="pstat"><div class="pstat-num" style="color:var(--accent)">${catPct}%</div><div class="pstat-lbl">% del total</div></div>
+    </div>`;
+
+  const list = document.getElementById('budgetSubList');
+  const items = cat.items||[];
+  if(!items.length){
+    list.innerHTML='<div class="empty" style="padding:40px 0"><div class="empty-ico">🧾</div><div class="empty-txt">Sin gastos aún<br><small>Toca ＋ para agregar uno</small></div></div>';
+    return;
+  }
+  const sorted = [...items].sort((a,b)=>(Number(b.amount)||0)-(Number(a.amount)||0));
+  list.innerHTML = sorted.map(it=>{
+    const itPct = catTotal > 0 ? Math.round((Number(it.amount)||0)/catTotal*100) : 0;
+    return `
+    <div class="sub-budget-item">
+      <div style="flex:1;min-width:0;">
+        <div class="sub-budget-name">${esc(it.name)}</div>
+        ${it.note?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(it.note)}</div>`:''}
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${itPct}% de esta categoría · ${fmtCreated(it.created)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <div class="sub-budget-price">${fmtMoney(it.amount)}</div>
+        <button class="ic-btn" onclick="editBudgetSubModal('${it.id}')">✏️</button>
+        <button class="ic-btn" onclick="deleteBudgetSub('${it.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MODALS: PRESUPUESTO ─────────────────────────────────
+function _syncToggleUI(){
+  const track=document.getElementById('shopToggleTrack');
+  if(track) track.className='toggle-track'+(selBudgetShopping?' on':'');
+}
+function openBudgetModal(){
+  editBudgetId=null; selBudgetEmoji='💰'; selBudgetColor='azul'; selBudgetShopping=false;
+  tempStores=[];
+  document.getElementById('fbName').value='';
+  document.getElementById('fbTotal').value='';
+  document.getElementById('budgetModalTitle').textContent='Nuevo Presupuesto';
+  buildPicker('budgetEmojiGrid',BUDGET_EMOJIS,selBudgetEmoji,pickBudgetEmoji);
+  buildBudgetColorPicker(); _syncToggleUI();
+  buildStoreTagsList();
+  document.getElementById('budgetOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fbName').focus(),300);
+}
+function editBudgetModal(id){
+  const b=budgets.find(x=>x.id===id); if(!b) return;
+  editBudgetId=id; selBudgetEmoji=b.emoji||'💰'; selBudgetColor=b.color||'azul'; selBudgetShopping=b.shoppingMode||false;
+  tempStores=JSON.parse(JSON.stringify(b.stores||[]));
+  document.getElementById('fbName').value=b.name;
+  document.getElementById('fbTotal').value=b.total||'';
+  document.getElementById('budgetModalTitle').textContent='Editar Presupuesto';
+  buildPicker('budgetEmojiGrid',BUDGET_EMOJIS,selBudgetEmoji,pickBudgetEmoji);
+  buildBudgetColorPicker(); _syncToggleUI();
+  buildStoreTagsList();
+  document.getElementById('budgetOverlay').classList.add('open');
+}
+function editCurBudget(){ editBudgetModal(curBudgetId); }
+function closeBudgetModal(){ document.getElementById('budgetOverlay').classList.remove('open'); }
+function pickBudgetEmoji(e){ selBudgetEmoji=e; buildPicker('budgetEmojiGrid',BUDGET_EMOJIS,selBudgetEmoji,pickBudgetEmoji); }
+function pickBudgetColor(k){ selBudgetColor=k; buildBudgetColorPicker(); }
+function buildBudgetColorPicker(){
+  let html='';
+  Object.entries(CAT_COLORS).forEach(function(entry){
+    const k=entry[0],v=entry[1],isSel=k===selBudgetColor;
+    html+='<div class="bgco'+(isSel?' sel':'')+'" style="background:'+v+';border-color:'+(isSel?'#fff':v)+'" data-k="'+k+'" onclick="pickBudgetColor(this.dataset.k)">'+(isSel?'<span style="color:#fff;font-weight:700;font-size:18px">&#10003;</span>':'')+'</div>';
+  });
+  document.getElementById('budgetColorRow').innerHTML=html;
+}
+function saveBudget(){
+  const name=document.getElementById('fbName').value.trim();
+  if(!name){toast('⚠️ Escribe el nombre');return;}
+  const total=parseFloat(document.getElementById('fbTotal').value)||0;
+  if(!total){toast('⚠️ Escribe el presupuesto total');return;}
+  if(editBudgetId){
+    const b=budgets.find(x=>x.id===editBudgetId);
+    b.name=name; b.total=total; b.emoji=selBudgetEmoji; b.color=selBudgetColor; b.shoppingMode=selBudgetShopping; b.stores=JSON.parse(JSON.stringify(tempStores));
+    toast('✏️ Presupuesto actualizado');
+  } else {
+    budgets.push({id:'b'+Date.now(),name,total,emoji:selBudgetEmoji,color:selBudgetColor,shoppingMode:selBudgetShopping,stores:JSON.parse(JSON.stringify(tempStores)),cats:[],created:new Date().toISOString()});
+    toast('💰 Presupuesto creado');
+  }
+  saveBudgets(); closeBudgetModal(); renderBudgets();
+  if(editBudgetId) renderBudgetCats();
+}
+
+// ── MODALS: CATEGORÍA ────────────────────────────────────
+function openBudgetCatModal(){
+  editBudgetCatId=null; selBudgetCatEmoji='📋';
+  document.getElementById('fbcName').value='';
+  document.getElementById('budgetCatModalTitle').textContent='Nueva Categoría';
+  buildPicker('budgetCatEmojiGrid',BUDGET_EMOJIS,selBudgetCatEmoji,pickBudgetCatEmoji);
+  document.getElementById('budgetCatOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fbcName').focus(),300);
+}
+function editBudgetCatModal(id){
+  const b=budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  const cat=(b.cats||[]).find(x=>x.id===id); if(!cat) return;
+  editBudgetCatId=id; selBudgetCatEmoji=cat.emoji||'📋';
+  document.getElementById('fbcName').value=cat.name;
+  document.getElementById('budgetCatModalTitle').textContent='Editar Categoría';
+  buildPicker('budgetCatEmojiGrid',BUDGET_EMOJIS,selBudgetCatEmoji,pickBudgetCatEmoji);
+  document.getElementById('budgetCatOverlay').classList.add('open');
+}
+function editCurBudgetCat(){ editBudgetCatModal(curBudgetCatId); }
+function closeBudgetCatModal(){ document.getElementById('budgetCatOverlay').classList.remove('open'); }
+function pickBudgetCatEmoji(e){ selBudgetCatEmoji=e; buildPicker('budgetCatEmojiGrid',BUDGET_EMOJIS,selBudgetCatEmoji,pickBudgetCatEmoji); }
+function saveBudgetCat(){
+  const name=document.getElementById('fbcName').value.trim();
+  if(!name){toast('⚠️ Escribe el nombre');return;}
+  const b=budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  if(!b.cats) b.cats=[];
+  if(editBudgetCatId){
+    const cat=b.cats.find(x=>x.id===editBudgetCatId);
+    cat.name=name; cat.emoji=selBudgetCatEmoji;
+    toast('✏️ Categoría actualizada');
+  } else {
+    b.cats.push({id:'bc'+Date.now(),name,emoji:selBudgetCatEmoji,items:[],created:new Date().toISOString()});
+    toast('📋 Categoría agregada');
+  }
+  saveBudgets(); closeBudgetCatModal(); renderBudgetCats();
+}
+
+// ── MODALS: SUBCATEGORÍA / GASTO ────────────────────────
+function openBudgetSubModal(){
+  editBudgetSubId=null; tempOptions=[]; tempSelectedOpt=null; tempSelectedStore=null;
+  document.getElementById('fbsName').value='';
+  document.getElementById('fbsAmount').value='';
+  document.getElementById('fbsNote').value='';
+  document.getElementById('budgetSubModalTitle').textContent='Nuevo Gasto';
+  buildOptionsList();
+  buildStorePickerBtns();
+  document.getElementById('budgetSubOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fbsName').focus(),300);
+}
+function editBudgetSubModal(id){
+  const b=budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  const cat=(b.cats||[]).find(x=>x.id===curBudgetCatId); if(!cat) return;
+  const it=(cat.items||[]).find(x=>x.id===id); if(!it) return;
+  editBudgetSubId=id;
+  tempOptions=JSON.parse(JSON.stringify(it.options||[]));
+  tempSelectedOpt=it.selectedOptionId||null;
+  tempSelectedStore=null;
+  document.getElementById('fbsName').value=it.name;
+  document.getElementById('fbsAmount').value=it.amount||'';
+  document.getElementById('fbsNote').value=it.note||'';
+  document.getElementById('budgetSubModalTitle').textContent='Editar Gasto';
+  buildOptionsList();
+  buildStorePickerBtns();
+  document.getElementById('budgetSubOverlay').classList.add('open');
+}
+function closeBudgetSubModal(){ document.getElementById('budgetSubOverlay').classList.remove('open'); }
+function saveBudgetSub(){
+  const name=document.getElementById('fbsName').value.trim();
+  if(!name){toast('⚠️ Escribe la descripción');return;}
+  const amount=parseFloat(document.getElementById('fbsAmount').value)||0;
+  if(!amount){toast('⚠️ Escribe el monto');return;}
+  const note=document.getElementById('fbsNote').value.trim();
+  const b=budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  const cat=(b.cats||[]).find(x=>x.id===curBudgetCatId); if(!cat) return;
+  if(!cat.items) cat.items=[];
+  // Effective price: use selected option price if any
+  const effectiveAmount = (tempSelectedOpt && tempOptions.length)
+    ? (tempOptions.find(o=>o.id===tempSelectedOpt)||{}).price || amount
+    : amount;
+  if(editBudgetSubId){
+    const it=cat.items.find(x=>x.id===editBudgetSubId);
+    it.name=name; it.amount=effectiveAmount; it.note=note;
+    it.options=JSON.parse(JSON.stringify(tempOptions));
+    it.selectedOptionId=tempSelectedOpt||null;
+    toast('✏️ Gasto actualizado');
+  } else {
+    cat.items.push({id:'bi'+Date.now(),name,amount:effectiveAmount,note,options:JSON.parse(JSON.stringify(tempOptions)),selectedOptionId:tempSelectedOpt||null,shoppingChecked:false,created:new Date().toISOString()});
+    toast('🧾 Gasto agregado');
+  }
+  saveBudgets(); closeBudgetSubModal(); renderBudgetSubs(); renderBudgetCats();
+}
+
+// ── DELETE ───────────────────────────────────────────────
+function askDeleteCurBudget(){
+  const b=budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  deleteTarget=curBudgetId; deleteType='budget';
+  document.getElementById('confTitle').textContent='¿Eliminar presupuesto?';
+  document.getElementById('confMsg').textContent='"'+b.name+'" y todos sus datos se eliminarán.';
+  document.getElementById('confWrap').classList.add('open');
+}
+function askDeleteCurBudgetCat(){
+  const b=budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  const cat=(b.cats||[]).find(x=>x.id===curBudgetCatId); if(!cat) return;
+  deleteTarget={budgetId:curBudgetId,catId:curBudgetCatId}; deleteType='budgetCat';
+  document.getElementById('confTitle').textContent='¿Eliminar categoría?';
+  document.getElementById('confMsg').textContent='"'+cat.name+'" y sus gastos se eliminarán.';
+  document.getElementById('confWrap').classList.add('open');
+}
+function deleteBudgetSub(id){
+  const b=budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  const cat=(b.cats||[]).find(x=>x.id===curBudgetCatId); if(!cat) return;
+  cat.items=cat.items.filter(x=>x.id!==id);
+  saveBudgets(); renderBudgetSubs(); renderBudgetCats();
+  toast('🗑 Gasto eliminado');
+}
+
+
+// ── EXPENSE OPTIONS ─────────────────────────────────────
+let tempOptions = [];        // options being edited in modal
+let tempSelectedOpt = null;  // selected option id in modal
+let selBudgetShopping = false; // toggle state in modal
+
+function buildOptionsList(){
+  const el = document.getElementById('optionsList');
+  if(!tempOptions.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--muted);padding:4px 0">Sin opciones por tienda aún</div>';
+    return;
+  }
+  el.innerHTML = tempOptions.map(opt=>{
+    const isSel = opt.id === tempSelectedOpt;
+    const oid = opt.id;
+    const div = document.createElement('div');
+    div.className = 'option-row' + (isSel ? ' selected' : '');
+    div.onclick = function(){ selectExpenseOption(oid); };
+    div.innerHTML =
+      '<div class="option-radio"><div class="option-radio-dot"></div></div>'+
+      '<span class="option-store">'+esc(opt.store)+'</span>'+
+      '<span class="option-price">$'+Number(opt.price).toLocaleString('es-MX',{minimumFractionDigits:2})+'</span>'+
+      '<button class="option-del">✕</button>';
+    div.querySelector('.option-del').onclick = function(e){ e.stopPropagation(); deleteExpenseOption(oid); };
+    return div.outerHTML;
+  }).join('');
+}
+
+function addExpenseOption(){
+  const store = tempSelectedStore;
+  const price = parseFloat(document.getElementById('optStorePrice').value)||0;
+  if(!store){toast('⚠️ Selecciona una tienda primero');return;}
+  if(!price){toast('⚠️ Escribe el precio');return;}
+  // Replace existing option for same store
+  const existing = tempOptions.findIndex(o=>o.store===store);
+  const id = existing>=0 ? tempOptions[existing].id : 'o'+Date.now();
+  if(existing>=0){ tempOptions[existing].price=price; }
+  else { tempOptions.push({id, store, price}); }
+  if(!tempSelectedOpt) tempSelectedOpt = id;
+  document.getElementById('optStorePrice').value='';
+  buildOptionsList();
+  buildStorePickerBtns();
+  updateAmountFromOption();
+}
+
+function selectExpenseOption(id){
+  tempSelectedOpt = id;
+  buildOptionsList();
+  updateAmountFromOption();
+}
+
+function deleteExpenseOption(id){
+  tempOptions = tempOptions.filter(o=>o.id!==id);
+  if(tempSelectedOpt===id) tempSelectedOpt = tempOptions.length ? tempOptions[0].id : null;
+  buildOptionsList();
+  updateAmountFromOption();
+}
+
+function updateAmountFromOption(){
+  if(tempSelectedOpt){
+    const opt = tempOptions.find(o=>o.id===tempSelectedOpt);
+    if(opt) document.getElementById('fbsAmount').value = opt.price;
+  }
+}
+
+// ── SHOPPING LIST TOGGLE ─────────────────────────────────
+function toggleBudgetShopping(){
+  selBudgetShopping = !selBudgetShopping;
+  const track = document.getElementById('shopToggleTrack');
+  if(track) track.className = 'toggle-track'+(selBudgetShopping?' on':'');
+}
+
+// ── UPDATE openBudgetModal & editBudgetSubModal for options ──
+// Overrides handled inline in saveBudgetSub below
+
+// ── SHOPPING LIST VIEW (BV4) ────────────────────────────
+function openShoppingList(budgetId){
+  curBudgetId = budgetId;
+  // Hide all budget views, then show bv4
+  ['bv1','bv2','bv3'].forEach(id=>{
+    document.getElementById(id).classList.add('slide-right');
+  });
+  const bv4 = document.getElementById('bv4');
+  bv4.classList.remove('slide-right');
+  bv4.style.zIndex = 10;
+  renderShoppingList();
+}
+
+function renderShoppingList(){
+  const b = budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  document.getElementById('bv4Name').textContent = (b.emoji||'💰')+' '+b.name+' — Lista de Compras';
+
+  // Collect ALL items from all cats, group by store
+  const groups = {}; // store -> [{catName, item}]
+  const ungrouped = [];
+  let totalAll=0, totalChecked=0, countAll=0, countChecked=0;
+
+  (b.cats||[]).forEach(cat=>{
+    (cat.items||[]).forEach(it=>{
+      const price = getEffectivePrice(it);
+      totalAll += price;
+      countAll++;
+      if(it.shoppingChecked){ totalChecked+=price; countChecked++; }
+
+      if(it.options && it.options.length && it.selectedOptionId){
+        const opt = it.options.find(o=>o.id===it.selectedOptionId);
+        const store = opt ? opt.store : 'Sin tienda';
+        if(!groups[store]) groups[store]=[];
+        groups[store].push({cat:cat.name, item:it, price});
+      } else {
+        ungrouped.push({cat:cat.name, item:it, price});
+      }
+    });
+  });
+
+  const pct = totalAll>0?Math.round(totalChecked/totalAll*100):0;
+  document.getElementById('bv4Sub').textContent = countChecked+' de '+countAll+' productos tachados · '+pct+'%';
+
+  document.getElementById('bv4TotalBar').innerHTML = `
+    <div class="shop-total-bar">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <div><div style="font-size:11px;color:var(--muted)">Total lista</div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;">$${totalAll.toLocaleString('es-MX',{minimumFractionDigits:2})}</div></div>
+        <div style="text-align:right;"><div style="font-size:11px;color:var(--muted)">Ya comprado</div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent3);">$${totalChecked.toLocaleString('es-MX',{minimumFractionDigits:2})}</div></div>
+      </div>
+      <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;">
+        <div style="width:${pct}%;height:100%;background:var(--accent3);border-radius:3px;transition:width .4s;"></div>
+      </div>
+    </div>`;
+
+  const list = document.getElementById('shoppingList');
+  let html = '';
+
+  // Render by store groups first
+  Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([store, items])=>{
+    const storeTotal = items.reduce((s,x)=>s+x.price,0);
+    const storeDone = items.filter(x=>x.item.shoppingChecked).length;
+    html += '<div class="shop-group-hdr">🏪 '+esc(store)+'  <span style="color:var(--muted);font-weight:400;font-size:10px">'+storeDone+'/'+items.length+' · $'+storeTotal.toLocaleString('es-MX',{minimumFractionDigits:2})+'</span></div>';
+    html += items.map(({cat,item,price})=>renderShopItem(item, cat, price)).join('');
+  });
+
+  // Ungrouped items
+  if(ungrouped.length){
+    html += '<div class="shop-group-hdr">📋 Sin tienda asignada</div>';
+    html += ungrouped.map(({cat,item,price})=>renderShopItem(item, cat, price)).join('');
+  }
+
+  if(!countAll){
+    html = '<div class="empty" style="padding:40px 0"><div class="empty-ico">🛒</div><div class="empty-txt">No hay gastos en este presupuesto<br><small>Agrega categorías y gastos primero</small></div></div>';
+  }
+
+  list.innerHTML = html;
+}
+
+function renderShopItem(item, catName, price){
+  const chk = item.shoppingChecked;
+  const iid = item.id;
+  const el = document.createElement('div');
+  el.className = 'shop-item';
+  el.innerHTML =
+    '<div class="shop-check'+(chk?' done':'')+'">'+( chk?'✓':'')+'</div>'+
+    '<div style="flex:1;min-width:0;">'+
+      '<div class="shop-item-name'+(chk?' done':'')+'">'+esc(item.name)+'</div>'+
+      '<div style="font-size:10px;color:var(--muted);margin-top:2px;">'+esc(catName)+'</div>'+
+    '</div>'+
+    '<span class="shop-item-price'+(chk?' done':'')+'">$'+price.toLocaleString('es-MX',{minimumFractionDigits:2})+'</span>';
+  el.querySelector('.shop-check').onclick = function(){ toggleShopItem(iid); };
+  return el.outerHTML;
+}
+
+function toggleShopItem(itemId){
+  const b = budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  for(const cat of b.cats||[]){
+    const it = (cat.items||[]).find(x=>x.id===itemId);
+    if(it){ it.shoppingChecked = !it.shoppingChecked; break; }
+  }
+  saveBudgets();
+  renderShoppingList();
+}
+
+function resetShoppingList(){
+  const b = budgets.find(x=>x.id===curBudgetId); if(!b) return;
+  (b.cats||[]).forEach(cat=>{ (cat.items||[]).forEach(it=>{ it.shoppingChecked=false; }); });
+  saveBudgets(); renderShoppingList();
+  toast('↺ Lista reiniciada');
+}
+
+function getEffectivePrice(item){
+  if(item.options && item.options.length && item.selectedOptionId){
+    const opt = item.options.find(o=>o.id===item.selectedOptionId);
+    if(opt) return Number(opt.price)||0;
+  }
+  return Number(item.amount)||0;
+}
+
+
+// ── BUDGET STORES ────────────────────────────────────────
+let tempStores = [];          // stores being edited in budget modal
+let tempSelectedStore = null; // store picked in expense option modal
+
+function buildStoreTagsList(){
+  const el = document.getElementById('storeTagsList');
+  if(!el) return;
+  if(!tempStores.length){
+    el.innerHTML = '<span style="font-size:12px;color:var(--muted)">Sin tiendas aún</span>';
+    return;
+  }
+  const frags = tempStores.map(s=>{
+    const wrap = document.createElement('div');
+    wrap.style.cssText='display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 10px;';
+    wrap.innerHTML='<span style="font-size:13px;font-weight:500;">🏪 '+esc(s)+'</span><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;">✕</button>';
+    wrap.querySelector('button').onclick=function(){ deleteBudgetStore(s); };
+    return wrap.outerHTML;
+  });
+  el.innerHTML = frags.join('');
+}
+
+function addBudgetStore(){
+  const inp = document.getElementById('newStoreName');
+  const name = inp.value.trim();
+  if(!name){ toast('⚠️ Escribe el nombre de la tienda'); return; }
+  if(tempStores.includes(name)){ toast('⚠️ Esa tienda ya existe'); return; }
+  tempStores.push(name);
+  inp.value = '';
+  buildStoreTagsList();
+  buildStorePickerBtns();
+}
+
+function deleteBudgetStore(name){
+  tempStores = tempStores.filter(s=>s!==name);
+  buildStoreTagsList();
+  buildStorePickerBtns();
+}
+
+function buildStorePickerBtns(){
+  const el = document.getElementById('storePickerBtns');
+  if(!el) return;
+  const b = budgets.find(x=>x.id===curBudgetId);
+  const stores = b ? (b.stores||[]) : [];
+  if(!stores.length){
+    el.innerHTML = '<span style="font-size:12px;color:var(--muted)">Este presupuesto no tiene tiendas configuradas.<br>Agrégalas en Editar Presupuesto.</span>';
+    return;
+  }
+  const btns = stores.map(s=>{
+    const isSel = s === tempSelectedStore;
+    const btn = document.createElement('button');
+    btn.style.cssText='padding:7px 14px;border-radius:20px;border:1px solid '+(isSel?'var(--accent3)':'var(--border)')+';background:'+(isSel?'rgba(78,205,196,.15)':'var(--bg)')+';color:'+(isSel?'var(--accent3)':'var(--text)')+';font-size:13px;font-weight:'+(isSel?'700':'400')+';cursor:pointer;';
+    btn.textContent='🏪 '+s;
+    btn.onclick=function(){ pickStoreForOption(s); };
+    return btn.outerHTML;
+  });
+  el.innerHTML = btns.join('');
+}
+
+function pickStoreForOption(store){
+  tempSelectedStore = store;
+  buildStorePickerBtns();
+}
+
 // ── EXPORT / IMPORT ────────────────────────────────────
 function exportData(){
-  const backup = { habitos: db, proyectos: projects, exportedAt: new Date().toISOString() };
+  const backup = { habitos: db, proyectos: projects, presupuestos: budgets, exportedAt: new Date().toISOString() };
   const json = JSON.stringify(backup, null, 2);
   const blob = new Blob([json], {type:'application/json'});
   const url = URL.createObjectURL(blob);
@@ -1781,10 +2662,15 @@ function importData(event){
           projects = parsed.proyectos;
           saveProjects();
         }
+        if(parsed.presupuestos){
+          budgets = parsed.presupuestos;
+          saveBudgets();
+        }
         renderCats();
         if(curSection==='proyectos') renderProjects();
-        const h = (db.habits||[]).length, p = (projects||[]).length;
-        toast('✅ Restaurado · ' + h + ' hábitos · ' + p + ' proyectos');
+        if(curSection==='presupuestos') renderBudgets();
+        const h=(db.habits||[]).length, p=(projects||[]).length, b=(budgets||[]).length;
+        toast('✅ Restaurado · '+h+' hábitos · '+p+' proyectos · '+b+' presupuestos');
       // Old format: just habits object
       } else if(parsed.categories || parsed.habits){
         db.categories = parsed.categories || [];
