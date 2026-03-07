@@ -330,6 +330,9 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
     <input id="authEmail" type="email" placeholder="Correo electrónico" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;"/>
     <input id="authPass" type="password" placeholder="Contraseña" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;"/>
     <div id="authError" style="font-size:12px;color:var(--danger);text-align:center;min-height:16px;"></div>
+    <div id="forgotWrap" style="text-align:right;">
+      <button onclick="olvidoContrasena()" style="background:none;border:none;color:var(--accent);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;padding:0;">¿Olvidaste tu contraseña?</button>
+    </div>
     <button id="authBtn" onclick="doAuth()" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),#a78bfa);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:16px;cursor:pointer;">Entrar</button>
     <div style="display:flex;align-items:center;gap:10px;margin:4px 0;">
       <div style="flex:1;height:1px;background:var(--border);"></div>
@@ -804,6 +807,7 @@ function switchAuthTab(mode){
   authMode = mode;
   const isReg = mode === 'reg';
   document.getElementById('regNameWrap').style.display = isReg ? 'block' : 'none';
+  document.getElementById('forgotWrap').style.display = isReg ? 'none' : 'block';
   document.getElementById('authBtn').textContent = isReg ? 'Crear cuenta' : 'Entrar';
   document.getElementById('tabLogin').style.background = isReg ? 'transparent' : 'var(--accent)';
   document.getElementById('tabLogin').style.color = isReg ? 'var(--muted)' : '#fff';
@@ -836,6 +840,18 @@ function doAuth(){
 }
 function cerrarSesion(){
   if(confirm('¿Cerrar sesión?')) auth.signOut();
+}
+function olvidoContrasena(){
+  const email = document.getElementById('authEmail').value.trim();
+  const errEl = document.getElementById('authError');
+  if(!email){ errEl.style.color='var(--accent3)'; errEl.textContent = 'Escribe tu correo arriba primero'; return; }
+  auth.sendPasswordResetEmail(email).then(function(){
+    errEl.style.color='var(--accent3)';
+    errEl.textContent = '✅ Correo de recuperación enviado a '+email;
+  }).catch(function(e){
+    errEl.style.color='var(--danger)';
+    errEl.textContent = e.code==='auth/user-not-found' ? 'No existe cuenta con ese correo' : 'Error: '+e.message;
+  });
 }
 function loginGoogle(){
   const provider = new firebase.auth.GoogleAuthProvider();
