@@ -2188,7 +2188,7 @@ function renderBv4(){
   const sinTienda = [];
   let totalLista=0, totalComprado=0, countTotal=0, countComprado=0;
   (b.cats||[]).forEach(cat=>{
-    (cat.gastos||[]).forEach(g=>{
+    (cat.gastos||[]).filter(g=>g.activo!==false).forEach(g=>{
       const pr=gastoPrice(g);
       totalLista += pr; countTotal++;
       if(g.comprado){ totalComprado+=pr; countComprado++; }
