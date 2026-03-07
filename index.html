@@ -304,8 +304,46 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
 .pb.sb{background:rgba(78,205,196,.25);border-color:var(--accent3);color:var(--accent3);font-weight:700;}
 .add-task-btn{background:var(--accent);border:none;color:#fff;width:44px;height:44px;border-radius:12px;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 </style>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="loginScreen" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;">
+  <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:4px;">Mon<span style="color:var(--accent)">Assistant</span></div>
+  <div style="font-size:13px;color:var(--muted);margin-bottom:40px;">Tu asistente personal</div>
+
+  <!-- tabs -->
+  <div style="display:flex;background:var(--card);border-radius:12px;padding:4px;margin-bottom:24px;width:100%;max-width:340px;">
+    <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:10px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;">Iniciar sesión</button>
+    <button id="tabReg" onclick="switchAuthTab('reg')" style="flex:1;padding:10px;border:none;border-radius:10px;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;">Registrarse</button>
+  </div>
+
+  <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px;">
+    <div id="regNameWrap" style="display:none;">
+      <input id="authName" type="text" placeholder="Tu nombre" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;"/>
+    </div>
+    <input id="authEmail" type="email" placeholder="Correo electrónico" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;"/>
+    <input id="authPass" type="password" placeholder="Contraseña" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:14px;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;"/>
+    <div id="authError" style="font-size:12px;color:var(--danger);text-align:center;min-height:16px;"></div>
+    <button id="authBtn" onclick="doAuth()" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),#a78bfa);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:16px;cursor:pointer;">Entrar</button>
+    <div style="display:flex;align-items:center;gap:10px;margin:4px 0;">
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+      <span style="font-size:12px;color:var(--muted);">o</span>
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+    </div>
+    <button onclick="loginGoogle()" style="width:100%;padding:14px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:20px;height:20px;"/>
+      Continuar con Google
+    </button>
+  </div>
+
+  <div style="margin-top:20px;font-size:12px;color:var(--muted);text-align:center;padding:0 16px;">Tus datos son privados y solo tú puedes acceder a ellos</div>
+</div>
 
 <!-- ═══ VISTA 1: CATEGORÍAS ═══ -->
 <div class="view" id="v1">
@@ -313,6 +351,7 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
     <div class="hdr-row">
       <div class="app-title">Mis<span>Hábitos</span></div>
       <div style="display:flex;gap:6px;align-items:center;">
+        <button class="ic-btn" onclick="cerrarSesion()" title="Cerrar sesión" style="font-size:18px;">🚪</button>
         <button class="ic-btn" onclick="exportData()" title="Exportar respaldo" style="font-size:18px;">💾</button>
         <button class="ic-btn" onclick="document.getElementById('importFile').click()" title="Importar respaldo" style="font-size:18px;">📂</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"/>
@@ -744,6 +783,107 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
 </div>
 
 <script>
+// ── FIREBASE INIT ──────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyD7wqv1_4Fq7lIZfgpj8X1Mg4qs5X5DZEY",
+  authDomain: "ofertashmo-bef92.firebaseapp.com",
+  databaseURL: "https://ofertashmo-bef92-default-rtdb.firebaseio.com",
+  projectId: "ofertashmo-bef92",
+  storageBucket: "ofertashmo-bef92.firebasestorage.app",
+  messagingSenderId: "249407262256",
+  appId: "1:249407262256:web:d3a5f9bade9a85f55667f5"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const rtdb  = firebase.database();
+let currentUser = null;
+
+// ── AUTH UI ────────────────────────────────────────────
+let authMode = 'login';
+function switchAuthTab(mode){
+  authMode = mode;
+  const isReg = mode === 'reg';
+  document.getElementById('regNameWrap').style.display = isReg ? 'block' : 'none';
+  document.getElementById('authBtn').textContent = isReg ? 'Crear cuenta' : 'Entrar';
+  document.getElementById('tabLogin').style.background = isReg ? 'transparent' : 'var(--accent)';
+  document.getElementById('tabLogin').style.color = isReg ? 'var(--muted)' : '#fff';
+  document.getElementById('tabReg').style.background = isReg ? 'var(--accent)' : 'transparent';
+  document.getElementById('tabReg').style.color = isReg ? '#fff' : 'var(--muted)';
+  document.getElementById('authError').textContent = '';
+}
+function doAuth(){
+  const email = document.getElementById('authEmail').value.trim();
+  const pass  = document.getElementById('authPass').value;
+  const errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  if(!email || !pass){ errEl.textContent = 'Completa todos los campos'; return; }
+  document.getElementById('authBtn').textContent = '...';
+  if(authMode === 'login'){
+    auth.signInWithEmailAndPassword(email, pass).catch(function(e){
+      document.getElementById('authBtn').textContent = 'Entrar';
+      errEl.textContent = e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' ? 'Correo o contraseña incorrectos' : 'Error: '+e.message;
+    });
+  } else {
+    const name = document.getElementById('authName').value.trim();
+    if(!name){ errEl.textContent = 'Escribe tu nombre'; document.getElementById('authBtn').textContent = 'Crear cuenta'; return; }
+    auth.createUserWithEmailAndPassword(email, pass).then(function(cred){
+      return cred.user.updateProfile({displayName: name});
+    }).catch(function(e){
+      document.getElementById('authBtn').textContent = 'Crear cuenta';
+      errEl.textContent = e.code === 'auth/email-already-in-use' ? 'Ese correo ya está registrado' : 'Error: '+e.message;
+    });
+  }
+}
+function cerrarSesion(){
+  if(confirm('¿Cerrar sesión?')) auth.signOut();
+}
+function loginGoogle(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(function(e){
+    document.getElementById('authError').textContent = 'Error Google: '+e.message;
+  });
+}
+
+// ── AUTH STATE LISTENER ────────────────────────────────
+auth.onAuthStateChanged(function(user){
+  currentUser = user;
+  if(user){
+    document.getElementById('loginScreen').style.display = 'none';
+    loadAllDataFromFirebase();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+});
+
+// ── FIREBASE DATA PATHS ────────────────────────────────
+function userRef(path){ return rtdb.ref('users/'+currentUser.uid+'/'+path); }
+
+// ── FIREBASE LOAD ALL ──────────────────────────────────
+function loadAllDataFromFirebase(){
+  // Habits
+  userRef('habitos').once('value').then(function(snap){
+    const val = snap.val();
+    if(val){ db = val; } else { db = {categories:[], habits:[]}; }
+    if(!db.categories) db.categories = [];
+    if(!db.habits) db.habits = [];
+    renderCalendar();
+  });
+  // Projects
+  userRef('proyectos').once('value').then(function(snap){
+    const val = snap.val();
+    projects = val ? val : [];
+    if(!Array.isArray(projects)) projects = [];
+    renderProjects();
+  });
+  // Budgets
+  userRef('presupuestos').once('value').then(function(snap){
+    const val = snap.val();
+    bData = val ? val : [];
+    if(!Array.isArray(bData)) bData = [];
+    renderBv1();
+  });
+}
+
 // ── STORAGE ────────────────────────────────────────────
 const KEY = 'habitos_v3';
 function loadData(){
@@ -768,7 +908,7 @@ function loadData(){
     return {};
   }catch(e){ return {}; }
 }
-function saveData(){ localStorage.setItem(KEY, JSON.stringify(db)); }
+function saveData(){ localStorage.setItem(KEY, JSON.stringify(db)); if(currentUser) userRef("habitos").set(db); }
 
 // db = { categories: [...], habits: [...] }
 let db = loadData();
@@ -1439,7 +1579,7 @@ function switchSection(sec){
 
 // ── PROJECTS DATA ───────────────────────────────────────
 function loadProjects(){ try{ return JSON.parse(localStorage.getItem('proyectos_v1')||'[]'); }catch(e){ return []; } }
-function saveProjects(){ localStorage.setItem('proyectos_v1', JSON.stringify(projects)); }
+function saveProjects(){ localStorage.setItem('proyectos_v1', JSON.stringify(projects)); if(currentUser) userRef("proyectos").set(projects); }
 let projects = loadProjects();
 
 // ── PROJECT NAV ─────────────────────────────────────────
@@ -2021,7 +2161,7 @@ function bLoad(){ try{ return JSON.parse(localStorage.getItem('bdata_v1')||'[]')
 
 
 
-function bSave(){ localStorage.setItem('bdata_v1', JSON.stringify(bData)); }
+function bSave(){ localStorage.setItem('bdata_v1', JSON.stringify(bData)); if(currentUser) userRef("presupuestos").set(bData); }
 bData = bLoad();
 
 // ── NAVEGACIÓN ──────────────────────────────────────
