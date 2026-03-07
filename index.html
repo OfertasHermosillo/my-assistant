@@ -2218,7 +2218,7 @@ function renderBv4(){
       const pr=gastoPrice(g);
       return `<div class="subtask-item" onclick="toggleComprado('${g.id}')">
         <div class="sub-check ${g.comprado?'done':''}">${g.comprado?'✓':''}</div>
-        <div style="flex:1"><div class="sub-title ${g.comprado?'done':''}">${esc(g.nombre)}</div><div class="sub-date">${esc(cat)}</div></div>
+        <div style="flex:1"><div class="sub-title ${g.comprado?'done':''}">${esc(g.nombre)}</div><div class="sub-date">${esc(cat)}${(g.cantidad&&(g.cantidad>1||g.unidad&&g.unidad!=='pzas'))?` · <span style="color:var(--accent3);font-family:'DM Mono',monospace;">${g.cantidad} ${g.unidad||'pzas'}</span>`:''}</div></div>
         <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:500;letter-spacing:-.01em;color:${g.comprado?'var(--muted)':'#f5a623'}">$${pr.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>
       </div>`;}).join('');
   });
@@ -2228,8 +2228,8 @@ function renderBv4(){
       const pr=gastoPrice(g);
       return `<div class="subtask-item" onclick="toggleComprado('${g.id}')">
         <div class="sub-check ${g.comprado?'done':''}">${g.comprado?'✓':''}</div>
-        <div style="flex:1"><div class="sub-title ${g.comprado?'done':''}">${esc(g.nombre)}</div><div class="sub-date">${esc(cat)}</div></div>
-        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:${g.comprado?'var(--muted)':'#f5a623'}">$${pr.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>
+        <div style="flex:1"><div class="sub-title ${g.comprado?'done':''}">${esc(g.nombre)}</div><div class="sub-date">${esc(cat)}${(g.cantidad&&(g.cantidad>1||g.unidad&&g.unidad!=='pzas'))?` · <span style="color:var(--accent3);font-family:'DM Mono',monospace;">${g.cantidad} ${g.unidad||'pzas'}</span>`:''}</div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:500;letter-spacing:-.01em;color:${g.comprado?'var(--muted)':'#f5a623'}">$${pr.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>
       </div>`;}).join('');
   }
   document.getElementById('bv4list').innerHTML = html;
