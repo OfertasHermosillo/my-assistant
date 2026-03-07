@@ -649,6 +649,23 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
     <div class="field"><label>Producto / descripción</label>
       <input type="text" id="gNombre" placeholder="Ej: Leche, Pollo, Jabón..." maxlength="60"/>
     </div>
+    <div class="field">
+      <label>Cantidad</label>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button onclick="selUnidad('pzas')"  id="ubtn-pzas"  style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;">📦 Piezas</button>
+        <button onclick="selUnidad('grs')"   id="ubtn-grs"   style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;">⚖️ Gramos</button>
+        <button onclick="selUnidad('kg')"    id="ubtn-kg"    style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;">🏋️ Kg</button>
+        <button onclick="selUnidad('lts')"   id="ubtn-lts"   style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;">🧴 Litros</button>
+        <button onclick="selUnidad('ml')"    id="ubtn-ml"    style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;font-family:'Outfit',sans-serif;">💧 ml</button>
+      </div>
+      <div style="display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <button onclick="gCambiarCantidad(-1)" style="background:none;border:none;color:var(--text);font-size:22px;padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;">−</button>
+        <input type="number" id="gCantidad" value="1" min="0.01" step="any" oninput="actualizarTotalPreview()" style="flex:1;background:transparent;border:none;color:var(--text);font-size:18px;font-weight:700;text-align:center;font-family:'Syne',sans-serif;padding:8px 0;"/>
+        <span id="gUnidadLabel" style="font-size:13px;color:var(--accent3);padding-right:12px;font-family:'Outfit',sans-serif;">pzas</span>
+        <button onclick="gCambiarCantidad(1)"  style="background:none;border:none;color:var(--text);font-size:22px;padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;">＋</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="gTotalPreview"></div>
+    </div>
     <div class="field"><label>Nota (opcional)</label>
       <input type="text" id="gNota" placeholder="Referencia, detalle..." maxlength="80"/>
     </div>
@@ -2147,7 +2164,7 @@ function renderBv3(){
     return `<div class="gasto-row" style="flex-direction:column;align-items:stretch;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="flex:1;min-width:0;">
-          <div style="font-size:15px;font-weight:600;">${esc(g.nombre)}</div>
+          <div style="font-size:15px;font-weight:600;">${esc(g.nombre)}${(g.cantidad&&g.cantidad>1)?` <span style="font-size:12px;color:var(--accent3);font-weight:400;">×${g.cantidad}</span>`:''}</div>
           ${g.nota?`<div style="font-size:11px;color:var(--muted);margin-top:1px;">${esc(g.nota)}</div>`:''}
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px;">
@@ -2326,11 +2343,14 @@ function confirmarEliminarCat(){
 
 // ── MODAL GASTO ──────────────────────────────────────
 function gastoPrice(g){
+  let precio = 0;
   if(g.opciones && g.opciones.length){
     const idx = (g.selOpc!=null && g.selOpc < g.opciones.length) ? g.selOpc : 0;
-    return Number(g.opciones[idx].precio)||0;
+    precio = Number(g.opciones[idx].precio)||0;
+  } else {
+    precio = Number(g.precio)||0;
   }
-  return Number(g.precio)||0;
+  return precio * (Number(g.cantidad)||1);
 }
 function seleccionarOpcion(gid, oi){
   const b=bData.find(x=>x.id===curBid); if(!b) return;
@@ -2345,6 +2365,7 @@ function renderGOpcList(){
     el.innerHTML='<div style="font-size:12px;color:var(--muted);">Sin opciones aún — agrega tienda y precio abajo</div>';
     return;
   }
+  actualizarTotalPreview();
   el.innerHTML = gOpciones.map((op,i) => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:${gSelOpc===i?'rgba(78,205,196,.12)':'var(--bg)'};border:1px solid ${gSelOpc===i?'var(--accent3)':'var(--border)'};border-radius:11px;cursor:pointer;" onclick="gSelOpc=${i};renderGOpcList()">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -2389,11 +2410,55 @@ function openModalGasto(id){
     document.getElementById('gNombre').value=''; document.getElementById('gNota').value='';
   }
   poblarTiendasSelect();
+  const _g2 = gastoEditId ? (()=>{ const b2=bData.find(x=>x.id===curBid); const c2=b2?(b2.cats||[]).find(x=>x.id===curCatId):null; return c2?(c2.gastos||[]).find(x=>x.id===gastoEditId):null; })() : null;
+  document.getElementById('gCantidad').value = _g2 ? _g2.cantidad||1 : 1;
+  selUnidad(_g2 ? _g2.unidad||'pzas' : 'pzas');
+  actualizarTotalPreview();
   renderGOpcList();
   document.getElementById('mGasto').classList.add('open');
   setTimeout(()=>document.getElementById('gNombre').focus(),300);
 }
 function cerrarModalGasto(){ document.getElementById('mGasto').classList.remove('open'); }
+let gUnidad = 'pzas';
+function selUnidad(u){
+  gUnidad = u;
+  document.getElementById('gUnidadLabel').textContent = u;
+  // step size depending on unit
+  const inp = document.getElementById('gCantidad');
+  if(u==='grs'||u==='ml'){ inp.step='1'; inp.min='1'; } 
+  else if(u==='kg'||u==='lts'){ inp.step='0.1'; inp.min='0.1'; }
+  else { inp.step='1'; inp.min='1'; }
+  // highlight active button
+  ['pzas','grs','kg','lts','ml'].forEach(function(x){
+    const btn=document.getElementById('ubtn-'+x);
+    if(!btn) return;
+    btn.style.background = x===u ? 'rgba(78,205,196,.2)' : 'var(--bg)';
+    btn.style.borderColor = x===u ? 'var(--accent3)' : 'var(--border)';
+    btn.style.color = x===u ? 'var(--accent3)' : 'var(--text)';
+    btn.style.fontWeight = x===u ? '700' : '400';
+  });
+  actualizarTotalPreview();
+}
+function gCambiarCantidad(d){
+  const inp = document.getElementById('gCantidad');
+  const step = gUnidad==='kg'||gUnidad==='lts' ? 0.1 : 1;
+  const v = Math.max(step, parseFloat(((parseFloat(inp.value)||0)+d*step).toFixed(3)));
+  inp.value = v;
+  actualizarTotalPreview();
+}
+function actualizarTotalPreview(){
+  const cant = parseInt(document.getElementById('gCantidad').value)||1;
+  // unit price (without quantity multiplication)
+  let unitPrecio = 0;
+  if(gOpciones.length){
+    const idx = gSelOpc!=null && gSelOpc<gOpciones.length ? gSelOpc : 0;
+    unitPrecio = Number(gOpciones[idx].precio)||0;
+  }
+  const el = document.getElementById('gTotalPreview');
+  if(!el) return;
+  if(cant>0 && unitPrecio>0) el.textContent = cant+' '+gUnidad+' × $'+unitPrecio.toFixed(2)+' = $'+(cant*unitPrecio).toLocaleString('es-MX',{minimumFractionDigits:2});
+  else el.textContent = '';
+}
 function guardarGasto(){
   const nombre=document.getElementById('gNombre').value.trim();
   if(!nombre){toast('⚠️ Escribe el nombre');return;}
@@ -2403,8 +2468,10 @@ function guardarGasto(){
   const cat=(b.cats||[]).find(x=>x.id===curCatId); if(!cat) return;
   if(!cat.gastos) cat.gastos=[];
   const sel = gSelOpc!=null ? gSelOpc : 0;
-  if(gastoEditId){ const g=cat.gastos.find(x=>x.id===gastoEditId); g.nombre=nombre;g.nota=nota;g.opciones=JSON.parse(JSON.stringify(gOpciones));g.selOpc=sel; toast('✏️ Gasto actualizado'); }
-  else { cat.gastos.push({id:'g'+Date.now(),nombre,nota,opciones:JSON.parse(JSON.stringify(gOpciones)),selOpc:sel,comprado:false,created:new Date().toISOString()}); toast('🧾 Gasto agregado'); }
+  const cant = Math.max(0.01, parseFloat(document.getElementById('gCantidad').value)||1);
+  const opcs = JSON.parse(JSON.stringify(gOpciones));
+  if(gastoEditId){ const g=cat.gastos.find(x=>x.id===gastoEditId); g.nombre=nombre;g.nota=nota;g.cantidad=cant;g.unidad=gUnidad;g.opciones=opcs;g.selOpc=sel; toast('✏️ Gasto actualizado'); }
+  else { cat.gastos.push({id:'g'+Date.now(),nombre,nota,cantidad:cant,unidad:gUnidad,opciones:opcs,selOpc:sel,activo:true,comprado:false,created:new Date().toISOString()}); toast('🧾 Gasto agregado'); }
   bSave(); cerrarModalGasto(); renderBv3(); renderBv2();
 }
 function eliminarGasto(id){
