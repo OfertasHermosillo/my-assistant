@@ -568,6 +568,7 @@ html,body{height:100%;background:var(--bg);font-family:'Outfit',sans-serif;color
   <div class="hdr">
     <div class="hdr-row">
       <button class="back-btn" onclick="navB(1)" style="color:var(--accent2)">‹ Presupuestos</button>
+      <button class="ic-btn" onclick="compartirLista()" title="Compartir">📤</button>
       <button class="ic-btn" onclick="resetCompras()">↺</button>
     </div>
     <div style="margin-top:6px;font-family:'DM Mono',monospace;font-size:17px;font-weight:500;letter-spacing:-.02em;" id="bv4title"></div>
@@ -2181,6 +2182,49 @@ function renderBv3(){
 }
 
 // ── RENDER BV4 LISTA DE COMPRAS ──────────────────────
+function compartirLista(){
+  var b=bData.find(function(x){return x.id===curBid;}); if(!b) return;
+  var NL='\n', HR='\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
+  var txt='\uD83D\uDED2 Lista de compras \u2014 '+b.name+NL+HR+NL;
+  var totalLista=0;
+  var grupos={}, sinTienda=[];
+  (b.cats||[]).forEach(function(cat){
+    (cat.gastos||[]).filter(function(g){return g.activo!==false;}).forEach(function(g){
+      var pr=gastoPrice(g);
+      totalLista+=pr;
+      var tienda=g.opciones&&g.opciones.length&&g.selOpc!=null?g.opciones[g.selOpc].tienda:'';
+      if(tienda){if(!grupos[tienda])grupos[tienda]=[];grupos[tienda].push({g:g,cat:cat.name,pr:pr});}
+      else sinTienda.push({g:g,cat:cat.name,pr:pr});
+    });
+  });
+  Object.keys(grupos).sort().forEach(function(tienda){
+    var items=grupos[tienda];
+    var st=items.reduce(function(s,x){return s+x.pr;},0);
+    txt+=NL+'\uD83C\uDFEA '+tienda+' \u2014 $'+st.toLocaleString('es-MX',{minimumFractionDigits:2})+NL;
+    items.forEach(function(x){
+      var cant=(x.g.cantidad&&(x.g.cantidad>1||x.g.unidad&&x.g.unidad!=='pzas'))?' ('+x.g.cantidad+' '+(x.g.unidad||'pzas')+')':'';
+      txt+='  \u2022 '+x.g.nombre+cant+'  $'+x.pr.toLocaleString('es-MX',{minimumFractionDigits:2})+NL;
+    });
+  });
+  if(sinTienda.length){
+    txt+=NL+'\uD83D\uDCCB Sin tienda'+NL;
+    sinTienda.forEach(function(x){
+      var cant=(x.g.cantidad&&(x.g.cantidad>1||x.g.unidad&&x.g.unidad!=='pzas'))?' ('+x.g.cantidad+' '+(x.g.unidad||'pzas')+')':'';
+      txt+='  \u2022 '+x.g.nombre+cant+'  $'+x.pr.toLocaleString('es-MX',{minimumFractionDigits:2})+NL;
+    });
+  }
+  txt+=NL+HR+NL+'Total: $'+totalLista.toLocaleString('es-MX',{minimumFractionDigits:2});
+  if(navigator.share){
+    navigator.share({title:'Lista \u2014 '+b.name,text:txt}).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(txt).then(function(){toast('\uD83D\uDCCB Lista copiada');}).catch(function(){
+      var ta=document.createElement('textarea');
+      ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');
+      document.body.removeChild(ta);toast('\uD83D\uDCCB Lista copiada');
+    });
+  }
+}
 function renderBv4(){
   const b = bData.find(x=>x.id===curBid); if(!b) return;
   document.getElementById('bv4title').textContent = '🛒 '+b.name+' — Lista de compras';
