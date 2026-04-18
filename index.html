@@ -882,6 +882,7 @@ function loadAllDataFromFirebase(){
     if(val){ db = val; } else { db = {categories:[], habits:[]}; }
     if(!db.categories) db.categories = [];
     if(!db.habits) db.habits = [];
+    renderCats();
     renderCalendar();
   });
   // Projects
