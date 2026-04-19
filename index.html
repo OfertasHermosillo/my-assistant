@@ -873,17 +873,23 @@ auth.onAuthStateChanged(function(user){
 // ── FIREBASE DATA PATHS ────────────────────────────────
 function userRef(path){ return rtdb.ref('users/'+currentUser.uid+'/'+path); }
 
+// Ensure all db fields are proper arrays after any Firebase load
+function fixDbArrays(){
+  if(!db) db = {};
+  if(!db.categories) db.categories = [];
+  if(!db.habits) db.habits = [];
+  if(!Array.isArray(db.categories)) db.categories = Object.values(db.categories).filter(Boolean);
+  if(!Array.isArray(db.habits)) db.habits = Object.values(db.habits).filter(Boolean);
+  // Fix nested logs objects (Firebase may convert them too, but they should be plain objects - fine)
+}
+
 // ── FIREBASE LOAD ALL ──────────────────────────────────
 function loadAllDataFromFirebase(){
   // Habits
   userRef('habitos').once('value').then(function(snap){
     const val = snap.val();
     if(val){ db = val; } else { db = {categories:[], habits:[]}; }
-    if(!db.categories) db.categories = [];
-    if(!db.habits) db.habits = [];
-    // Firebase converts arrays to objects — convert back
-    if(!Array.isArray(db.categories)) db.categories = Object.values(db.categories);
-    if(!Array.isArray(db.habits)) db.habits = Object.values(db.habits);
+    fixDbArrays();
     renderCats();
     renderCalendar();
   });
@@ -1051,8 +1057,10 @@ function renderCats(){
     return;
   }
 
+  fixDbArrays();
+  try {
   list.innerHTML = db.categories.map(cat => {
-    const catHabits = db.habits.filter(h=>h.catId===cat.id);
+    const catHabits = (Array.isArray(db.habits)?db.habits:[]).filter(h=>h.catId===cat.id);
     const solidColor = CAT_COLORS[cat.color||'morado'];
     const accentColor = lightenColor(solidColor, 0.5); // 50% lighter for text/bar
     const {done, total, pct} = getCatProgress(cat.id);
@@ -1076,10 +1084,14 @@ function renderCats(){
       <div style="margin-top:7px;font-size:11px;color:rgba(255,255,255,.5);font-weight:300;">${done} sesiones este mes</div>
     </div>`;
   }).join('');
+  } catch(e) {
+    console.error('renderCats error:', e);
+    list.innerHTML = '<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-txt">Error cargando categorías<br><small>'+e.message+'</small></div></div>';
+  }
 }
 
 function getCatProgress(catId){
-  const habits = db.habits.filter(h=>h.catId===catId);
+  const habits = (Array.isArray(db.habits)?db.habits:[]).filter(h=>h.catId===catId);
   if(!habits.length) return {done:0,total:0,pct:0};
   const today = new Date();
   const mk = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0');
