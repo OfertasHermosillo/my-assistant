@@ -881,6 +881,9 @@ function loadAllDataFromFirebase(){
     if(val){ db = val; } else { db = {categories:[], habits:[]}; }
     if(!db.categories) db.categories = [];
     if(!db.habits) db.habits = [];
+    // Firebase converts arrays to objects — convert back
+    if(!Array.isArray(db.categories)) db.categories = Object.values(db.categories);
+    if(!Array.isArray(db.habits)) db.habits = Object.values(db.habits);
     renderCats();
     renderCalendar();
   });
@@ -888,14 +891,14 @@ function loadAllDataFromFirebase(){
   userRef('proyectos').once('value').then(function(snap){
     const val = snap.val();
     projects = val ? val : [];
-    if(!Array.isArray(projects)) projects = [];
+    if(!Array.isArray(projects)) projects = Object.values(projects);
     renderProjects();
   });
   // Budgets
   userRef('presupuestos').once('value').then(function(snap){
     const val = snap.val();
     bData = val ? val : [];
-    if(!Array.isArray(bData)) bData = [];
+    if(!Array.isArray(bData)) bData = Object.values(bData);
     renderBv1();
   });
 }
