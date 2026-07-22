@@ -2782,6 +2782,185 @@ function importData(event){
   };
   reader.readAsText(file);
 }
+
+// ═══════════════════════════════════════════════════
+// AHORROS
+// ═══════════════════════════════════════════════════
+let aData = [];
+let curAid = null;
+let aEditId = null;
+let aSelEmoji = '🏦';
+let aSelColor = 'teal';
+
+const A_EMOJIS = ['🏦','🚗','💳','✈️','🏠','🎓','💍','🏋️','🌴','💻','📱','🎸','🐾','🍽️','💊','🎁','🌟','⚽','🎨','📚'];
+const A_COLORS = {teal:'#009688', azul:'#0055ff', morado:'#7b00e8', verde:'#00a832', naranja:'#ff6600', rosa:'#e91e8c', amarillo:'#e6b800', rojo:'#e8000d'};
+
+function aSave(){ localStorage.setItem('adata_v1', JSON.stringify(aData)); if(currentUser) userRef('ahorros').set(aData); }
+
+function navA(v){
+  ['av1','av2'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    el.classList.add('slide-right');
+    el.style.zIndex=0;
+  });
+  var target = document.getElementById('av'+v);
+  if(target){ target.style.zIndex=10; setTimeout(function(){ target.classList.remove('slide-right'); }, 10); }
+  if(v===1) renderAv1();
+  if(v===2) renderAv2();
+}
+
+function renderAv1(){
+  var list = document.getElementById('av1list');
+  var sub  = document.getElementById('av1sub');
+  if(!list) return;
+  sub.textContent = aData.length + (aData.length===1?' concepto':' conceptos');
+  if(!aData.length){
+    list.innerHTML = '<div class="empty"><div class="empty-ico">🏦</div><div class="empty-txt">Sin conceptos aún<br><small>Toca + para crear uno</small></div></div>';
+    return;
+  }
+  list.innerHTML = aData.map(function(a){
+    var total = ahorroTotal(a);
+    var pct   = a.meta>0 ? Math.min(100, Math.round(total/a.meta*100)) : 0;
+    var col   = A_COLORS[a.color||'teal'] || '#009688';
+    return '<div class="cat-row" onclick="abrirAhorro(\''+a.id+'\')" style="border-left:4px solid '+col+';margin-bottom:10px;">'
+      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
+      +   '<span style="font-size:26px;">'+(a.emoji||'🏦')+'</span>'
+      +   '<div style="flex:1;">'
+      +     '<div style="font-family:\'DM Sans\',sans-serif;font-size:15px;font-weight:700;">'+esc(a.name)+'</div>'
+      +   '</div>'
+      +   '<div style="text-align:right;">'
+      +     '<div style="font-family:\'DM Mono\',monospace;font-size:14px;font-weight:500;color:'+col+';">'+pct+'%</div>'
+      +     '<div style="font-size:10px;color:var(--muted);">$'+total.toLocaleString('es-MX',{minimumFractionDigits:2})+' / $'+(a.meta||0).toLocaleString('es-MX',{minimumFractionDigits:2})+'</div>'
+      +   '</div>'
+      + '</div>'
+      + '<div style="background:var(--border);border-radius:6px;height:8px;overflow:hidden;">'
+      +   '<div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:6px;transition:width .4s;"></div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function ahorroTotal(a){
+  return (a.aportaciones||[]).reduce(function(s,ap){ return s+(Number(ap.monto)||0); }, 0);
+}
+
+function abrirAhorro(id){
+  curAid = id;
+  var el = document.getElementById('av1'); if(el){ el.classList.add('slide-right'); el.style.zIndex=0; }
+  var el2 = document.getElementById('av2'); if(el2){ el2.style.zIndex=10; setTimeout(function(){ el2.classList.remove('slide-right'); },10); }
+  renderAv2();
+}
+
+function renderAv2(){
+  var a = aData.find(function(x){ return x.id===curAid; });
+  if(!a) return;
+  var col = A_COLORS[a.color||'teal'] || '#009688';
+  var total = ahorroTotal(a);
+  var pct = a.meta>0 ? Math.min(100, Math.round(total/a.meta*100)) : 0;
+  var resto = Math.max(0, (a.meta||0) - total);
+  document.getElementById('av2title').textContent = (a.emoji||'🏦')+' '+a.name;
+  document.getElementById('av2stats').innerHTML =
+    '<div style="background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;">'
+    + '<div style="display:flex;justify-content:space-between;margin-bottom:10px;">'
+    +   '<div><div style="font-size:10px;color:var(--muted);">AHORRADO</div><div style="font-family:\'DM Mono\',monospace;font-size:18px;font-weight:500;color:'+col+';">$'+total.toLocaleString('es-MX',{minimumFractionDigits:2})+'</div></div>'
+    +   '<div style="text-align:center;"><div style="font-size:10px;color:var(--muted);">META</div><div style="font-family:\'DM Mono\',monospace;font-size:18px;font-weight:500;">$'+(a.meta||0).toLocaleString('es-MX',{minimumFractionDigits:2})+'</div></div>'
+    +   '<div style="text-align:right;"><div style="font-size:10px;color:var(--muted);">FALTA</div><div style="font-family:\'DM Mono\',monospace;font-size:18px;font-weight:500;color:var(--muted);">$'+resto.toLocaleString('es-MX',{minimumFractionDigits:2})+'</div></div>'
+    + '</div>'
+    + '<div style="background:var(--border);border-radius:8px;height:12px;overflow:hidden;">'
+    +   '<div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:8px;transition:width .5s;"></div>'
+    + '</div>'
+    + '<div style="text-align:center;font-size:12px;color:'+col+';margin-top:6px;font-family:\'DM Mono\',monospace;">'+pct+'% completado</div>'
+    + '</div>';
+  var aps = (a.aportaciones||[]).slice().sort(function(a,b){ return new Date(b.fecha)-new Date(a.fecha); });
+  var listEl = document.getElementById('av2list');
+  if(!aps.length){
+    listEl.innerHTML = '<div class="empty" style="padding-top:20px;"><div class="empty-ico">💵</div><div class="empty-txt">Sin aportaciones aún<br><small>Toca + para registrar un depósito</small></div></div>';
+    return;
+  }
+  listEl.innerHTML = aps.map(function(ap){
+    var d = new Date(ap.fecha);
+    var fechaStr = d.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    return '<div class="sub-item" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">'
+      + '<div style="width:40px;height:40px;border-radius:50%;background:'+col+'22;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💵</div>'
+      + '<div style="flex:1;">'
+      +   '<div style="font-family:\'DM Mono\',monospace;font-size:15px;font-weight:500;color:'+col+';">+$'+Number(ap.monto).toLocaleString('es-MX',{minimumFractionDigits:2})+'</div>'
+      +   (ap.nota ? '<div style="font-size:12px;color:var(--text);">'+esc(ap.nota)+'</div>' : '')
+      +   '<div style="font-size:11px;color:var(--muted);">'+fechaStr+'</div>'
+      + '</div>'
+      + '<button onclick="eliminarAportacion(\''+ap.id+'\')" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px;">🗑</button>'
+      + '</div>';
+  }).join('');
+}
+
+function openModalAhorro(id){
+  aEditId = id||null;
+  document.getElementById('mAhorroTitle').textContent = id ? 'Editar Ahorro' : 'Nuevo Ahorro';
+  var a = id ? aData.find(function(x){ return x.id===id; }) : null;
+  document.getElementById('aName').value = a ? a.name : '';
+  document.getElementById('aMeta').value = a ? a.meta : '';
+  aSelEmoji = a ? (a.emoji||'🏦') : '🏦';
+  aSelColor = a ? (a.color||'teal') : 'teal';
+  renderAEmojiGrid();
+  renderAColorGrid();
+  document.getElementById('mAhorro').classList.add('open');
+  setTimeout(function(){ document.getElementById('aName').focus(); }, 300);
+}
+function renderAEmojiGrid(){
+  document.getElementById('aEmojiGrid').innerHTML = A_EMOJIS.map(function(e){
+    var sel = e===aSelEmoji;
+    return '<button onclick="aSelEmoji=this.textContent;renderAEmojiGrid()" style="font-size:22px;background:'+(sel?'rgba(78,205,196,.2)':'var(--bg)')+';border:'+(sel?'2px solid #4ecdc4':'2px solid transparent')+';border-radius:8px;padding:4px;cursor:pointer;">'+e+'</button>';
+  }).join('');
+}
+function renderAColorGrid(){
+  document.getElementById('aColorGrid').innerHTML = Object.keys(A_COLORS).map(function(k){
+    var sel = k===aSelColor;
+    return '<button onclick="aSelColor=\''+k+'\';renderAColorGrid()" style="width:32px;height:32px;border-radius:50%;background:'+A_COLORS[k]+';border:'+(sel?'3px solid #fff':'3px solid transparent')+';cursor:pointer;box-shadow:'+(sel?'0 0 0 2px '+A_COLORS[k]:'none')+'"></button>';
+  }).join('');
+}
+function cerrarModalAhorro(){ document.getElementById('mAhorro').classList.remove('open'); }
+function guardarAhorro(){
+  var name = document.getElementById('aName').value.trim();
+  var meta = parseFloat(document.getElementById('aMeta').value)||0;
+  if(!name){ toast('Escribe un nombre'); return; }
+  if(aEditId){
+    var a = aData.find(function(x){ return x.id===aEditId; });
+    if(a){ a.name=name; a.meta=meta; a.emoji=aSelEmoji; a.color=aSelColor; }
+  } else {
+    aData.push({id:'a'+Date.now(), name:name, meta:meta, emoji:aSelEmoji, color:aSelColor, aportaciones:[], created:new Date().toISOString()});
+  }
+  aSave(); cerrarModalAhorro(); renderAv1(); toast('✅ Concepto guardado');
+}
+function eliminarAhorro(){
+  var a = aData.find(function(x){ return x.id===curAid; });
+  if(!a) return;
+  if(!confirm('¿Eliminar "'+a.name+'" y todas sus aportaciones?')) return;
+  aData = aData.filter(function(x){ return x.id!==curAid; });
+  aSave(); navA(1);
+}
+function openModalAportacion(){
+  document.getElementById('apMonto').value = '';
+  document.getElementById('apNota').value = '';
+  document.getElementById('mAportacion').classList.add('open');
+  setTimeout(function(){ document.getElementById('apMonto').focus(); }, 300);
+}
+function cerrarModalAportacion(){ document.getElementById('mAportacion').classList.remove('open'); }
+function guardarAportacion(){
+  var monto = parseFloat(document.getElementById('apMonto').value)||0;
+  if(!monto||monto<=0){ toast('Ingresa un monto válido'); return; }
+  var nota = document.getElementById('apNota').value.trim();
+  var a = aData.find(function(x){ return x.id===curAid; });
+  if(!a) return;
+  if(!a.aportaciones) a.aportaciones = [];
+  a.aportaciones.push({id:'ap'+Date.now(), monto:monto, nota:nota, fecha:new Date().toISOString()});
+  aSave(); cerrarModalAportacion(); renderAv2(); toast('💵 Aportación guardada');
+}
+function eliminarAportacion(apid){
+  var a = aData.find(function(x){ return x.id===curAid; });
+  if(!a) return;
+  a.aportaciones = (a.aportaciones||[]).filter(function(x){ return x.id!==apid; });
+  aSave(); renderAv2(); toast('🗑 Aportación eliminada');
+}
+
 </script>
 
 <!-- ═══ AHORROS ═══ -->
